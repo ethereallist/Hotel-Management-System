@@ -14,6 +14,11 @@ int main()
 {
     struct Reserva cliente;
     int Fecha_Es_Valida = 0;
+    // Asigno las categorias por defecto preexistentes en el hotel
+    struct Hotel Categorias = {{{1, 1, 2, 2, 3},
+                                {1, 1, 2, 2, 3},
+                                {1, 1, 2, 2, 3},
+                                {1, 1, 2, 2, 3}}};
 
     printf("Bienvenido al sistema de gestion del Hotel 'El Descanso del Páramo'\n");
     printf("Por favor, registrese para empezar.\n");
@@ -50,8 +55,9 @@ int main()
     printf("Personas totales: %i\n", cliente.Personas_Totales);
     printf("Fecha de reserva: %i/%i/%i \n", cliente.dd_Entrada, cliente.mm_Entrada, cliente.aa_Entrada);
     printf("Fecha de salida: %i/%i/%i \n", cliente.dd_Salida, cliente.mm_Salida, cliente.aa_Salida);
-    printf("-------------------------------------------");
+    printf("-------------------------------------------\n");
 
+    Asignar_Categorias(Categorias);
     printf("\n");
 
     return 0;

@@ -8,7 +8,7 @@
 
 struct Hotel
 {
-    int habitaciones[4][5];
+    int Habitaciones[4][5];
 };
 
 struct Reserva
@@ -69,6 +69,10 @@ void Validar_Fecha(int dd, int mm, int aa, int *validar)
     {
         printf("Introduce un mes valido para reservar: \n");
     }
+    else if (aa < 2024)
+    {
+        printf("Introduce un año valido para reservar: \n");
+    }
 
     // Esto cambia la variable Fecha_Es_Valida del main para salir del bucle.
 
@@ -78,13 +82,17 @@ void Validar_Fecha(int dd, int mm, int aa, int *validar)
     }
 }
 
-void Asignar_Categorias(struct Hotel)
+void Asignar_Categorias(struct Hotel Categorias)
 {
-    // Asigno 2 habitaciones sencillas, 2 dobles y 1 triple por piso del hotel.
-    struct Hotel Categorias = {1,1,2,2,3};
-    for (int i = 0; i < Categorias.habitaciones; i++)
+    // Asigno 2 habitaciones sencillas, 2 dobles y 1 triple por piso del hotel en el main y aqui las visualizo.
+    printf("Categorias de cada habitacion del hotel: \n");
+    for (int i = 0; i < 4; i++)
     {
-       printf("imprimo a ver si esta bien");
+        for (int j = 0; j < 5; j++)
+        {
+            
+            printf("%i", Categorias.Habitaciones[i][j]);
+        }
+        printf("\n");
     }
-    
 }
