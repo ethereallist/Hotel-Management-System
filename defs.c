@@ -1,24 +1,25 @@
 #include "defs.h"
 
-struct Hotel
-{
-    int habitaciones[4][5];
-};
+// Todas las funciones van aquí
 
-struct Reserva
-{
-    char Nombre[50];
-    char Apellido[50];
-    int Numero_Id;
-    int Personas_Totales;
-    int Fecha_Entrada[5][7]; //formato de calendario 5 filas 7 columnas
-    int Fecha_Salida[5][7]; //formato de calendario 5 filas 7 columnas
-    char Tipo_Habitacion[20];
-    float Precio_Total;
-};
+// BUG: AL PONER ESTO EN EL MAIN DICE "IMPLICIT DECLARATION" No encuentra la función.
 
+// void Validar_Fecha(int dd, int mm, int aa)
+// {
+//     // Excluir años pasados
+//     if(aa < 2024)
+//     {
+//         printf("Introduce un año válido para reservar.");
+//     }
+    
+//     if(mm > 12 || mm < 1)
+//     {
+//         printf("Introduce un mes válido para reservar.");
+//     }
 
-// Validación de la disponibilidad de habitaciones según la categoría y fecha seleccionada:
-
-
+//     if(dd > 31 || dd < 1)
+//     {
+//         printf("Introduce un dia válido para reservar.");
+//     }
+// }
 
