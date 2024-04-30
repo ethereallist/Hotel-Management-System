@@ -309,5 +309,3 @@ int DeVectorAArchivo(T_Reserva * Vector, int Tam)
 	fwrite(Vector, sizeof(T_Reserva), Tam, PtrFile);
 	fclose(PtrFile);
 }
-
->>>>>>> Stashed changes

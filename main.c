@@ -32,4 +32,3 @@ int main()
 }
 
 // Bugs: Cuando se introduce mas de un nombre o apellido se rompe.
->>>>>>> Stashed changes
