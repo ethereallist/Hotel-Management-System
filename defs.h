@@ -8,11 +8,7 @@
 
 // Declaracion de funciones:
 
-<<<<<<< Updated upstream
-
-
 // Declaracion de variables:
-=======
 typedef struct
 {
     int Habitaciones[4][5];

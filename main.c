@@ -2,13 +2,7 @@
 #include "defs.h"
 
 int main()
-{
-<<<<<<< Updated upstream
-    return 0;
-}
-=======
-    
-    
+{      
     // Asigno las categorias por defecto preexistentes en el hotel
     T_Hotel Categorias = {{{1, 1, 2, 2, 3},
                            {1, 1, 2, 2, 3},
