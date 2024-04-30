@@ -40,6 +40,37 @@ typedef struct
     int Fecha_Libre;
 } T_Habitacion;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//_____________________Funciones de Validación______________
 void Validar_Fecha(int dd, int mm, int aa, int *validar)
 {
     // Excluir fechas invalidas
@@ -215,8 +246,10 @@ void ImprimirReserva(T_Reserva Cliente)
 //_______________________Funciones para VECTORES DE T_Reserva____________
 
 
-int AgrandarVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
+int AgrandarUnoVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
 {
+	/*DESCRIPCION: Agranda el VECTOR en 1
+	Debes pasarle el int donde estas guardando el tamaño de ese vector*/
 	(*PtrTam)++;
 	printf("Nueva cantidad de elementos: %i\n", (*PtrTam));
 	(*PtrVector) = realloc((*PtrVector), (*PtrTam) * sizeof(T_Reserva));
@@ -268,13 +301,15 @@ int AgrandarVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
 
 
 //________________________FUNCIONES PARA ARCHIVOS-VECTORES__________________________
-
-
 const char ArchivoReservas[] = "reservas_data";
 
 
-int DeArchivoAVector(T_Reserva * *PtrVector, int * Tam)
+int DeArchivoAVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
 {
+	/*DESCRIPCION: Lee lo que hay en el archivo y lo pasa a UN VECTOR, y tambien te dice el TAMAÑO que tiene este
+	Le tienes que pasar un apuntador a una direccion de vector para que guarde los datos ahí
+	Tambien le pasas apuntador a un entero para que lo modifique y te diga el tamaño del vector que crea*/
+	
 	FILE * PtrFile = fopen(ArchivoReservas, "rb");
 	if( PtrFile == NULL)
 	{
@@ -282,26 +317,101 @@ int DeArchivoAVector(T_Reserva * *PtrVector, int * Tam)
 	}
 	else
 	{
-
+		//Se va al final, revisa cuanto pesa el archivo
 		fseek(PtrFile, 0, SEEK_END);
 		long TamArchivo = ftell(PtrFile);
+		//Calcula cuantos elementos tiene: Peso/PesoElemento
+		(*PtrTam) = TamArchivo / sizeof(T_Reserva);
 
-		(*Tam) = TamArchivo / sizeof(T_Reserva);
+		rewind(PtrFile); //Vuelve al inicio
 
-		rewind(PtrFile);
-
-
-		(*PtrVector) = calloc((*Tam), sizeof(T_Reserva));
-
-		fread((*PtrVector), sizeof(T_Reserva), (*Tam), PtrFile);
-		fclose(PtrFile);
+		//Crea un vector: Reserva el espacio en memoria adecuado
+		(*PtrVector) = calloc((*PtrTam), sizeof(T_Reserva));
+		
+		//Pasa los datos al vector recien creado
+		fread((*PtrVector), sizeof(T_Reserva), (*PtrTam), PtrFile);
+		
+		fclose(PtrFile); //Cierra
 		return 0;
 	}
 }
 
-int DeVectorAArchivo(T_Reserva * Vector, int Tam)
+
+int DeVectorReservaAArchivo(T_Reserva * Vector, int Tam)
 {
-	FILE * PtrFile = fopen(ArchivoReservas, "wb");
-	fwrite(Vector, sizeof(T_Reserva), Tam, PtrFile);
-	fclose(PtrFile);
+	/*DESCRIPCION: Fácil, toma lo que hay en un VECTOR (tmb le indicas el TAMAÑO) y lo guarda en el archivo
+	CABE DESTACAR, que crea el archivo de 0*/
+	
+	FILE * PtrFile = fopen(ArchivoReservas, "wb"); //Crea archivo
+	fwrite(Vector, sizeof(T_Reserva), Tam, PtrFile); //Escribe los datos
+	fclose(PtrFile); //Cierra
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//__________________FUNCIONES TONTAS___________________
+void Enter()
+{
+	while(getchar() != '\n');
+}
+
+void LimpiarEntrada()
+{
+	for(char ch; ch != EOF && ch != '\n'; ch = fgetc(stdin));
+}
+
+void Limpiar()
+{
+	system("clear");
+}
+
+
+char Opcion()
+{
+	printf("---> ");
+	char c = getchar();
+	if(c != '\n')
+	LimpiarEntrada();
+
+	return c;
 }
