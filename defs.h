@@ -4,15 +4,26 @@
 
 // Este archivo debe contener las declaraciones de variables y funciones
 
-// ---------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------DECLARACION DE LAS VARIABLES--------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
 
-// Declaracion de funciones:
-
-// Declaracion de variables:
 typedef struct
 {
     int Habitaciones[4][5];
 } T_Hotel;
+
+
+
+typedef struct
+{
+	int dd;
+	int mm;
+	int aa;
+}T_Fecha;
+
+
+
 
 typedef struct 
 {
@@ -20,8 +31,8 @@ typedef struct
     char Apellido[50];
     int Numero_Id;
     int Personas_Totales;
-    int dd_Entrada, mm_Entrada, aa_Entrada;
-    int dd_Salida, mm_Salida, aa_Salida;
+    T_Fecha Entrada;
+    T_Fecha Salida;
     int Categoria;
     int Num_Habitacion;
     float Precio_Total;
@@ -44,6 +55,134 @@ typedef struct
 
 
 
+// Asigno las categorias por defecto preexistentes en el hotel
+T_Hotel Categorias = {{{1, 1, 2, 2, 3},
+                       {1, 1, 2, 2, 3},
+                       {1, 1, 2, 2, 3},
+                       {1, 1, 2, 2, 3}}};
+
+//Creo un """prototipo de vector""" para la Lista de las Reservas
+T_Reserva * ListaDeReservas;
+int CantidadReservas; 
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------DECLARACION DE LAS FUNCIONES--------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
+
+
+// MENUS INICIALES
+int Iniciar();
+int Bienvenida();
+int MenuPrincipal();
+
+// FUNCIONES DE VALIDAR
+void Validar_Fecha(T_Fecha F, int *validar);
+
+
+
+// FUNCIONES PARA T_RESERVA
+void scan_Nombre(T_Reserva * PtrCliente);
+void scan_Apellido(T_Reserva * PtrCliente);
+void scan_Num_Id(T_Reserva * PtrCliente);
+void scan_Personas_Totales(T_Reserva * PtrCliente);
+void scan_Categoria(T_Reserva * PtrCliente);
+void ModificarReserva(T_Reserva * PtrCliente);
+void ImprimirReserva(T_Reserva Cliente);
+
+
+// FUNCIONES PARA VECTORES DE T_RESERVA
+int AgrandarUnoVectorReserva(T_Reserva * *PtrVector, int * PtrTam);
+
+// FUNCIONES PARA ARCHIVOS-VECTORES
+int DeArchivoAVectorReserva(T_Reserva * *PtrVector, int * PtrTam);
+int DeVectorReservaAArchivo(T_Reserva * Vector, int Tam);
+
+// FUNCIONES TONTAS
+void Enter();
+void LimpiarEntrada();
+void Limpiar();
+char Opcion();
+int salir();
+
+
+
+
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------DEFINICION DE LAS FUNCIONES--------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+//________________________MENUS INICIALES_____________________
+int Iniciar()
+{
+    //LEO de nuestro archivo la lista que ya tenía (el archivo se llama reservas_data)
+    //Lo paso todo de un Archivo a un Vector
+    DeArchivoAVectorReserva(&ListaDeReservas, &CantidadReservas);
+	
+	
+	/*___________BIENVENIDA________*/
+    Bienvenida();
+    MenuPrincipal();
+}
+
+int Bienvenida()
+{	
+	printf("Bienvenido al sistema de gestion del Hotel 'El Descanso del Páramo'\n");
+}
+
+int MenuPrincipal()
+{
+	while(1)
+	{
+		printf("1. Agg reserva\n");
+		printf("2. Ver todas las reservas actuales\n");
+		printf("3. Modificar reserva\n");
+		printf("0. Salir\n");
+		
+		switch(Opcion()-48) //-48 por ser ascii
+		{
+			case 1:
+				AgrandarUnoVectorReserva(&ListaDeReservas, &CantidadReservas);
+				ModificarReserva(&ListaDeReservas[CantidadReservas-1]);
+				DeVectorReservaAArchivo(ListaDeReservas, CantidadReservas);
+				break;
+			
+			case 2:
+				for(int i = 0; i < CantidadReservas; i++)
+				{
+					printf("\n-------------------------------------------\n");
+					printf("CLIENTE #%i\n", i+1);
+					ImprimirReserva(ListaDeReservas[i]);
+				}
+				break;
+				
+			case 3:
+				printf("Qué reserva desea modificar?: #");
+				int i; 	scanf("%i", &i);
+				ModificarReserva(&ListaDeReservas[i-1]);
+				DeVectorReservaAArchivo(ListaDeReservas, CantidadReservas);
+				break;
+			
+			case 0:
+				return 0;
+				break;
+		}
+	}
+}
 
 
 
@@ -70,27 +209,82 @@ typedef struct
 
 
 
-//_____________________Funciones de Validación______________
-void Validar_Fecha(int dd, int mm, int aa, int *validar)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//_____________________FUNCIONES DE VALIDACION______________
+void Validar_Fecha(T_Fecha F, int *validar)
 {
     // Excluir fechas invalidas
 
     // BUGS: al introducir un caracter se rompe. Al introducir mes 04,06,09 con el 0 no entra en la condicion.
 
-    if (dd > 31 || dd < 1)
+    if (F.dd > 31 || F.dd < 1)
     {
         printf("Introduce un dia valido para reservar: \n");
     }
 
     // Excluir los dias 31 de los meses abril, junio, septiembre y noviembre.
 
-    else if (mm == 4 || mm == 6 || mm == 9 || mm == 11)
+    else if (F.mm == 4 || F.mm == 6 || F.mm == 9 || F.mm == 11)
     {
-        if (dd > 30)
+        if (F.dd > 30)
         {
             printf("Este mes solo tiene 30 dias, escoja otro dia: ");
         }
-        else if (aa < 2024)
+        else if (F.aa < 2024)
         {
             printf("Introduce un año valido para reservar: \n");
         }
@@ -99,11 +293,11 @@ void Validar_Fecha(int dd, int mm, int aa, int *validar)
             *validar = 1;
         }
     }
-    else if (mm > 12 || mm < 1)
+    else if (F.mm > 12 || F.mm < 1)
     {
         printf("Introduce un mes valido para reservar: \n");
     }
-    else if (aa < 2024)
+    else if (F.aa < 2024)
     {
         printf("Introduce un año valido para reservar: \n");
     }
@@ -168,21 +362,151 @@ void Asignar_Categorias(T_Hotel Categorias)
 
 
 
-//________________________Funciones PARA T_Reserva __________________________
+//________________________FUNCIONES PARA T_RESERVA __________________________
+void scan_Nombre(T_Reserva * PtrCliente)
+{
+	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
+	
+	do
+	{
+		char ch = 0;
+		int i = 0;
+		do
+		{
+			scanf("%c", &ch);
+			if(ch != '\n')
+			{
+				FueModificado = 1;
+				(*PtrCliente).Nombre[i] = ch;
+				i++;
+			}
+		}
+		while(ch != '\n' && i < 50);
+		
+		//Si sobraron caracteres
+		if(ch != '\n')
+		{
+			do
+			{
+				ch = getchar();
+			}
+			while(ch != '\n');
+		}
+	}
+	while(FueModificado != 1);
+}
+
+
+void scan_Apellido(T_Reserva * PtrCliente)
+{
+	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
+	
+	do
+	{
+		char ch = 0;
+		int i = 0;
+		do
+		{
+			scanf("%c", &ch);
+			if(ch != '\n')
+			{
+				FueModificado = 1;
+				(*PtrCliente).Apellido[i] = ch;
+				i++;
+			}
+		}
+		while(ch != '\n' && i < 50);
+		
+		//Si sobraron caracteres
+		if(ch != '\n')
+		{
+			do
+			{
+				ch = getchar();
+			}
+			while(ch != '\n');
+		}
+	}
+	while(FueModificado != 1);
+}
+
+
+void scan_Num_Id(T_Reserva * PtrCliente)
+{
+	int Valido = 0;
+	char Buffer[10];
+	int Aux;
+	
+	do
+	{
+		
+		printf("Identificación: ");
+		scanf("%s", &Buffer);
+		LimpiarEntrada();
+		Aux = atoi(Buffer);
+		
+		if(Aux > 0) Valido = 1; 
+	}
+	while(Valido != 1);
+	(*PtrCliente).Numero_Id = Aux;
+}
+
+
+void scan_Personas_Totales(T_Reserva * PtrCliente)
+{
+	int Valido = 0;
+	char Buffer;
+	int Aux;
+	
+	do
+	{
+		
+		printf("Personas totales: ");
+		Buffer = getchar();
+		LimpiarEntrada();
+		Aux = atoi(&Buffer);
+		
+		if(Aux > 0) Valido = 1; 
+	}
+	while(Valido != 1);
+	
+	(*PtrCliente).Personas_Totales = Aux;
+}
+
+
+void scan_Categoria(T_Reserva * PtrCliente)
+{
+	int Valido = 0;
+	char Buffer;
+	int Aux;
+	
+	do
+	{
+		printf("Categoria de habitacion deseada\n");
+		printf("Seleccione su categoría de habitación:\n1. Habitación Sencilla\n2. Habitacion doble\n3. Habitacion triple\n");
+		Buffer = getchar();
+		LimpiarEntrada();
+		Aux = atoi(&Buffer);
+		
+		if(Aux >= 1 && Aux <= 3) Valido = 1; 
+	}
+	while(Valido != 1);
+	
+	(*PtrCliente).Categoria = Aux;
+	
+}
 
 
 void ModificarReserva(T_Reserva * PtrCliente)
 {
-	 printf("Por favor, registrese para empezar.\n");
     printf("Nombre: ");
-    scanf("%s", &(*PtrCliente).Nombre);
+    scan_Nombre(PtrCliente);
     printf("Apellido: ");
-    scanf("%s", &(*PtrCliente).Apellido);
-    printf("Personas totales: ");
-    scanf("%i", &(*PtrCliente).Personas_Totales);
-    printf("Categoria de habitacion deseada\n");
-    printf("Seleccione su categoría de habitación:\n1 para Habitación Sencilla, 2 para doble, 3 para triple: ");
-    scanf("%i", &(*PtrCliente).Categoria);
+	scan_Apellido(PtrCliente);
+    
+    scan_Num_Id(PtrCliente);
+    scan_Personas_Totales(PtrCliente);
+    scan_Categoria(PtrCliente);
 
 
 	
@@ -190,8 +514,8 @@ void ModificarReserva(T_Reserva * PtrCliente)
     int Fecha_Es_Valida = 0;
     do
     {
-        scanf("%i/%i/%i", &(*PtrCliente).dd_Entrada, &(*PtrCliente).mm_Entrada, &(*PtrCliente).aa_Entrada);
-        Validar_Fecha((*PtrCliente).dd_Entrada, (*PtrCliente).mm_Entrada, (*PtrCliente).aa_Entrada, &Fecha_Es_Valida);
+        scanf("%i/%i/%i", &(*PtrCliente).Entrada.dd, &(*PtrCliente).Entrada.mm, &(*PtrCliente).Entrada.aa);
+        Validar_Fecha((*PtrCliente).Entrada, &Fecha_Es_Valida);
     } while (Fecha_Es_Valida == 0);
 
     Fecha_Es_Valida = 0;
@@ -199,10 +523,13 @@ void ModificarReserva(T_Reserva * PtrCliente)
     printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
     do
     {
-        scanf("%i/%i/%i", &(*PtrCliente).dd_Salida, &(*PtrCliente).mm_Salida, &(*PtrCliente).aa_Salida);
-        Validar_Fecha((*PtrCliente).dd_Salida, (*PtrCliente).mm_Salida, (*PtrCliente).aa_Salida, &Fecha_Es_Valida);
+        scanf("%i/%i/%i", &(*PtrCliente).Salida.dd, &(*PtrCliente).Salida.mm, &(*PtrCliente).Salida.aa);
+        Validar_Fecha((*PtrCliente).Salida, &Fecha_Es_Valida);
     } while (Fecha_Es_Valida == 0);
 }
+
+
+
 
 
 void ImprimirReserva(T_Reserva Cliente)
@@ -211,9 +538,11 @@ void ImprimirReserva(T_Reserva Cliente)
     printf("-------------------------------------------\n");
     printf("Su nombre es: %s\n", Cliente.Nombre);
     printf("Su apellido es: %s\n", Cliente.Apellido);
+    printf("Su numero de ID es: %i\n", Cliente.Numero_Id);
     printf("Personas totales: %i\n", Cliente.Personas_Totales);
-    printf("Fecha de reserva: %i/%i/%i \n", Cliente.dd_Entrada, Cliente.mm_Entrada, Cliente.aa_Entrada);
-    printf("Fecha de salida: %i/%i/%i \n", Cliente.dd_Salida, Cliente.mm_Salida, Cliente.aa_Salida);
+    printf("Categoria de habitacion: %i\n", Cliente.Categoria);
+    printf("Fecha de reserva: %i/%i/%i \n", Cliente.Entrada.dd, Cliente.Entrada.mm, Cliente.Entrada.aa);
+    printf("Fecha de salida: %i/%i/%i \n", Cliente.Salida.dd, Cliente.Salida.mm, Cliente.Salida.aa);
     printf("-------------------------------------------\n");
 }
 
@@ -243,7 +572,7 @@ void ImprimirReserva(T_Reserva Cliente)
 
 
 
-//_______________________Funciones para VECTORES DE T_Reserva____________
+//__________________FUNCIONES PARA VECTORES DE T_RESERVA____________
 
 
 int AgrandarUnoVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
@@ -408,10 +737,23 @@ void Limpiar()
 
 char Opcion()
 {
+	//El primer caracter que introduces, el lo toma y lo devuelve
+	
 	printf("---> ");
-	char c = getchar();
-	if(c != '\n')
-	LimpiarEntrada();
-
-	return c;
+	char ch;
+	char chfinal = 0;
+	int FueAlgoDiferenteDeN = 0;
+	do
+	{
+		char ch = getchar();
+		
+		if(ch != '\n' && chfinal == 0) //Solo se va a ejecutar una vez
+		{
+			FueAlgoDiferenteDeN = 1;
+			chfinal = ch;
+		}
+	}
+	while(FueAlgoDiferenteDeN == 0);
+	return chfinal;
 }
+
