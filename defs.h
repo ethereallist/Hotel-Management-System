@@ -36,15 +36,15 @@ typedef struct
     int Categoria;
     int Num_Habitacion;
     float Precio_Total;
-}T_Reserva;
+}re;
 
 typedef struct
 {
     int Categoria; // Sencilla, doble o triple
     int Reservada; // Si o no
     int N_Dias_Ocupada;
-    char Nombre_Cliente[50];
-    int Id_Cliente;
+    char Nombre_Reserva[50];
+    int Id_Reserva;
     int Numero_Habitacion;
     int Numero_Piso;
     int Fecha_Reserva;
@@ -61,9 +61,10 @@ T_Hotel Categorias = {{{1, 1, 2, 2, 3},
                        {1, 1, 2, 2, 3},
                        {1, 1, 2, 2, 3}}};
 
+
 //Creo un """prototipo de vector""" para la Lista de las Reservas
-T_Reserva * ListaDeReservas;
-int CantidadReservas; 
+re * RESERVAS;
+int Tam_RESERVAS; 
 
 
 
@@ -89,21 +90,26 @@ void Validar_Fecha(T_Fecha F, int *validar);
 
 
 // FUNCIONES PARA T_RESERVA
-void scan_Nombre(T_Reserva * PtrCliente);
-void scan_Apellido(T_Reserva * PtrCliente);
-void scan_Num_Id(T_Reserva * PtrCliente);
-void scan_Personas_Totales(T_Reserva * PtrCliente);
-void scan_Categoria(T_Reserva * PtrCliente);
-void ModificarReserva(T_Reserva * PtrCliente);
-void ImprimirReserva(T_Reserva Cliente);
+void printReserva(re Reserva);
+void scanReserva(re * PtrReserva);
+
+// SUB-FUNCIONES DE SCANRESERVA()
+void scan_Nombre(re * PtrReserva);
+void scan_Apellido(re * PtrReserva);
+void scan_Num_Id(re * PtrReserva);
+void scan_Personas_Totales(re * PtrReserva);
+void scan_Categoria(re * PtrReserva);
+void scan_Fecha_Entrada(re * PtrReserva);
+void scan_Fecha_Salida(re * PtrReserva);
+
 
 
 // FUNCIONES PARA VECTORES DE T_RESERVA
-int AgrandarUnoVectorReserva(T_Reserva * *PtrVector, int * PtrTam);
+int Agrandar_RESERVAS();
 
 // FUNCIONES PARA ARCHIVOS-VECTORES
-int DeArchivoAVectorReserva(T_Reserva * *PtrVector, int * PtrTam);
-int DeVectorReservaAArchivo(T_Reserva * Vector, int Tam);
+int READ_RESERVAS();
+int WRITE_RESERVAS();
 
 // FUNCIONES TONTAS
 void Enter();
@@ -129,12 +135,9 @@ int salir();
 //________________________MENUS INICIALES_____________________
 int Iniciar()
 {
-    //LEO de nuestro archivo la lista que ya tenía (el archivo se llama reservas_data)
-    //Lo paso todo de un Archivo a un Vector
-    DeArchivoAVectorReserva(&ListaDeReservas, &CantidadReservas);
+    ///LEO EL ARCHIVO Y LO PASO AL VECTOR (EXTRAIGO SU INFORMACION)
+    READ_RESERVAS();
 	
-	
-	/*___________BIENVENIDA________*/
     Bienvenida();
     MenuPrincipal();
 }
@@ -148,7 +151,7 @@ int MenuPrincipal()
 {
 	while(1)
 	{
-		printf("1. Agg reserva\n");
+		printf("1. Agregar reserva\n");
 		printf("2. Ver todas las reservas actuales\n");
 		printf("3. Modificar reserva\n");
 		printf("0. Salir\n");
@@ -156,25 +159,25 @@ int MenuPrincipal()
 		switch(Opcion()-48) //-48 por ser ascii
 		{
 			case 1:
-				AgrandarUnoVectorReserva(&ListaDeReservas, &CantidadReservas);
-				ModificarReserva(&ListaDeReservas[CantidadReservas-1]);
-				DeVectorReservaAArchivo(ListaDeReservas, CantidadReservas);
+				Agrandar_RESERVAS();
+				scanReserva(&RESERVAS[Tam_RESERVAS-1]);
+				WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
 				break;
 			
 			case 2:
-				for(int i = 0; i < CantidadReservas; i++)
+				for(int i = 0; i < Tam_RESERVAS; i++)
 				{
 					printf("\n-------------------------------------------\n");
 					printf("CLIENTE #%i\n", i+1);
-					ImprimirReserva(ListaDeReservas[i]);
+					printReserva(RESERVAS[i]);
 				}
 				break;
 				
 			case 3:
 				printf("Qué reserva desea modificar?: #");
 				int i; 	scanf("%i", &i);
-				ModificarReserva(&ListaDeReservas[i-1]);
-				DeVectorReservaAArchivo(ListaDeReservas, CantidadReservas);
+				scanReserva(&RESERVAS[i-1]);
+				WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
 				break;
 			
 			case 0:
@@ -183,45 +186,6 @@ int MenuPrincipal()
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -363,10 +327,45 @@ void Asignar_Categorias(T_Hotel Categorias)
 
 
 //________________________FUNCIONES PARA T_RESERVA __________________________
-void scan_Nombre(T_Reserva * PtrCliente)
+
+
+
+
+void printReserva(re Reserva)
 {
-	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
+	printf("Los datos que tenemos del cliente %s %s son: \n", Reserva.Nombre, Reserva.Apellido);
+    printf("-------------------------------------------\n");
+    printf("Su nombre es: %s\n", Reserva.Nombre);
+    printf("Su apellido es: %s\n", Reserva.Apellido);
+    printf("Su numero de ID es: %i\n", Reserva.Numero_Id);
+    printf("Personas totales: %i\n", Reserva.Personas_Totales);
+    printf("Categoria de habitacion: %i\n", Reserva.Categoria);
+    printf("Fecha de reserva: %i/%i/%i \n", Reserva.Entrada.dd, Reserva.Entrada.mm, Reserva.Entrada.aa);
+    printf("Fecha de salida: %i/%i/%i \n", Reserva.Salida.dd, Reserva.Salida.mm, Reserva.Salida.aa);
+    printf("-------------------------------------------\n");
+}
+
+void scanReserva(re * PtrReserva)
+{
+    
+    scan_Nombre(PtrReserva);
+	scan_Apellido(PtrReserva);
+    
+    scan_Num_Id(PtrReserva);
+    scan_Personas_Totales(PtrReserva);
+    scan_Categoria(PtrReserva);
 	
+	scan_Fecha_Entrada(PtrReserva);
+	scan_Fecha_Salida(PtrReserva);
+}
+
+//_________________________SUB-FUNCIONES DE SCANRESERVA()_________________________
+
+void scan_Nombre(re * PtrReserva)
+{
+	printf("Nombre: ");
+	
+	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
 	do
 	{
 		char ch = 0;
@@ -377,7 +376,7 @@ void scan_Nombre(T_Reserva * PtrCliente)
 			if(ch != '\n')
 			{
 				FueModificado = 1;
-				(*PtrCliente).Nombre[i] = ch;
+				(*PtrReserva).Nombre[i] = ch;
 				i++;
 			}
 		}
@@ -397,10 +396,11 @@ void scan_Nombre(T_Reserva * PtrCliente)
 }
 
 
-void scan_Apellido(T_Reserva * PtrCliente)
+void scan_Apellido(re * PtrReserva)
 {
-	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
+	printf("Apellido: ");
 	
+	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
 	do
 	{
 		char ch = 0;
@@ -411,7 +411,7 @@ void scan_Apellido(T_Reserva * PtrCliente)
 			if(ch != '\n')
 			{
 				FueModificado = 1;
-				(*PtrCliente).Apellido[i] = ch;
+				(*PtrReserva).Apellido[i] = ch;
 				i++;
 			}
 		}
@@ -431,7 +431,7 @@ void scan_Apellido(T_Reserva * PtrCliente)
 }
 
 
-void scan_Num_Id(T_Reserva * PtrCliente)
+void scan_Num_Id(re * PtrReserva)
 {
 	int Valido = 0;
 	char Buffer[10];
@@ -448,11 +448,11 @@ void scan_Num_Id(T_Reserva * PtrCliente)
 		if(Aux > 0) Valido = 1; 
 	}
 	while(Valido != 1);
-	(*PtrCliente).Numero_Id = Aux;
+	(*PtrReserva).Numero_Id = Aux;
 }
 
 
-void scan_Personas_Totales(T_Reserva * PtrCliente)
+void scan_Personas_Totales(re * PtrReserva)
 {
 	int Valido = 0;
 	char Buffer;
@@ -470,11 +470,11 @@ void scan_Personas_Totales(T_Reserva * PtrCliente)
 	}
 	while(Valido != 1);
 	
-	(*PtrCliente).Personas_Totales = Aux;
+	(*PtrReserva).Personas_Totales = Aux;
 }
 
 
-void scan_Categoria(T_Reserva * PtrCliente)
+void scan_Categoria(re * PtrReserva)
 {
 	int Valido = 0;
 	char Buffer;
@@ -492,62 +492,31 @@ void scan_Categoria(T_Reserva * PtrCliente)
 	}
 	while(Valido != 1);
 	
-	(*PtrCliente).Categoria = Aux;
+	(*PtrReserva).Categoria = Aux;
 	
 }
 
-
-void ModificarReserva(T_Reserva * PtrCliente)
+void scan_Fecha_Entrada(re * PtrReserva)
 {
-    printf("Nombre: ");
-    scan_Nombre(PtrCliente);
-    printf("Apellido: ");
-	scan_Apellido(PtrCliente);
-    
-    scan_Num_Id(PtrCliente);
-    scan_Personas_Totales(PtrCliente);
-    scan_Categoria(PtrCliente);
-
-
-	
-    printf("Introduzca la fecha de reserva (DD/MM/AAAA): ");
+	printf("Introduzca la fecha de entrada (DD/MM/AAAA): ");
     int Fecha_Es_Valida = 0;
     do
     {
-        scanf("%i/%i/%i", &(*PtrCliente).Entrada.dd, &(*PtrCliente).Entrada.mm, &(*PtrCliente).Entrada.aa);
-        Validar_Fecha((*PtrCliente).Entrada, &Fecha_Es_Valida);
+        scanf("%i/%i/%i", &(*PtrReserva).Entrada.dd, &(*PtrReserva).Entrada.mm, &(*PtrReserva).Entrada.aa);
+        Validar_Fecha((*PtrReserva).Entrada, &Fecha_Es_Valida);
     } while (Fecha_Es_Valida == 0);
+}
 
-    Fecha_Es_Valida = 0;
-
-    printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
+void scan_Fecha_Salida(re * PtrReserva)
+{
+	printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
+	int Fecha_Es_Valida = 0;
     do
     {
-        scanf("%i/%i/%i", &(*PtrCliente).Salida.dd, &(*PtrCliente).Salida.mm, &(*PtrCliente).Salida.aa);
-        Validar_Fecha((*PtrCliente).Salida, &Fecha_Es_Valida);
+        scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
+        Validar_Fecha((*PtrReserva).Salida, &Fecha_Es_Valida);
     } while (Fecha_Es_Valida == 0);
 }
-
-
-
-
-
-void ImprimirReserva(T_Reserva Cliente)
-{
-	printf("Los datos que tenemos del cliente %s %s son: \n", Cliente.Nombre, Cliente.Apellido);
-    printf("-------------------------------------------\n");
-    printf("Su nombre es: %s\n", Cliente.Nombre);
-    printf("Su apellido es: %s\n", Cliente.Apellido);
-    printf("Su numero de ID es: %i\n", Cliente.Numero_Id);
-    printf("Personas totales: %i\n", Cliente.Personas_Totales);
-    printf("Categoria de habitacion: %i\n", Cliente.Categoria);
-    printf("Fecha de reserva: %i/%i/%i \n", Cliente.Entrada.dd, Cliente.Entrada.mm, Cliente.Entrada.aa);
-    printf("Fecha de salida: %i/%i/%i \n", Cliente.Salida.dd, Cliente.Salida.mm, Cliente.Salida.aa);
-    printf("-------------------------------------------\n");
-}
-
-
-
 
 
 
@@ -575,16 +544,16 @@ void ImprimirReserva(T_Reserva Cliente)
 //__________________FUNCIONES PARA VECTORES DE T_RESERVA____________
 
 
-int AgrandarUnoVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
+int Agrandar_RESERVAS()
 {
 	/*DESCRIPCION: Agranda el VECTOR en 1
 	Debes pasarle el int donde estas guardando el tamaño de ese vector*/
-	(*PtrTam)++;
-	printf("Nueva cantidad de elementos: %i\n", (*PtrTam));
-	(*PtrVector) = realloc((*PtrVector), (*PtrTam) * sizeof(T_Reserva));
+	Tam_RESERVAS++;
+	printf("Nueva cantidad de elementos: %i\n", Tam_RESERVAS);
+	RESERVAS = realloc(RESERVAS, Tam_RESERVAS * sizeof(re));
 
 	//Si hay errores
-	if((*PtrVector) == NULL) return 1;
+	if(RESERVAS == NULL) return 1;
 	else return 0;
 }
 
@@ -630,16 +599,14 @@ int AgrandarUnoVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
 
 
 //________________________FUNCIONES PARA ARCHIVOS-VECTORES__________________________
-const char ArchivoReservas[] = "reservas_data";
+const char NombreArchivoRESERVAS[] = "reservas_data";
 
 
-int DeArchivoAVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
+int READ_RESERVAS()
 {
-	/*DESCRIPCION: Lee lo que hay en el archivo y lo pasa a UN VECTOR, y tambien te dice el TAMAÑO que tiene este
-	Le tienes que pasar un apuntador a una direccion de vector para que guarde los datos ahí
-	Tambien le pasas apuntador a un entero para que lo modifique y te diga el tamaño del vector que crea*/
+	/*DESCRIPCION: Lee la informacion del archivo y la pasa a RESERVAS*/
 	
-	FILE * PtrFile = fopen(ArchivoReservas, "rb");
+	FILE * PtrFile = fopen(NombreArchivoRESERVAS, "rb");
 	if( PtrFile == NULL)
 	{
 		return 1;
@@ -650,15 +617,15 @@ int DeArchivoAVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
 		fseek(PtrFile, 0, SEEK_END);
 		long TamArchivo = ftell(PtrFile);
 		//Calcula cuantos elementos tiene: Peso/PesoElemento
-		(*PtrTam) = TamArchivo / sizeof(T_Reserva);
+		Tam_RESERVAS = TamArchivo / sizeof(re);
 
 		rewind(PtrFile); //Vuelve al inicio
 
 		//Crea un vector: Reserva el espacio en memoria adecuado
-		(*PtrVector) = calloc((*PtrTam), sizeof(T_Reserva));
+		RESERVAS = calloc(Tam_RESERVAS, sizeof(re));
 		
 		//Pasa los datos al vector recien creado
-		fread((*PtrVector), sizeof(T_Reserva), (*PtrTam), PtrFile);
+		fread(RESERVAS, sizeof(re), Tam_RESERVAS, PtrFile);
 		
 		fclose(PtrFile); //Cierra
 		return 0;
@@ -666,13 +633,12 @@ int DeArchivoAVectorReserva(T_Reserva * *PtrVector, int * PtrTam)
 }
 
 
-int DeVectorReservaAArchivo(T_Reserva * Vector, int Tam)
+int WRITE_RESERVAS()
 {
-	/*DESCRIPCION: Fácil, toma lo que hay en un VECTOR (tmb le indicas el TAMAÑO) y lo guarda en el archivo
-	CABE DESTACAR, que crea el archivo de 0*/
+	/*DESCRIPCION: Hace un archivo nuevo con lo que haya en RESEVAS*/
 	
-	FILE * PtrFile = fopen(ArchivoReservas, "wb"); //Crea archivo
-	fwrite(Vector, sizeof(T_Reserva), Tam, PtrFile); //Escribe los datos
+	FILE * PtrFile = fopen(NombreArchivoRESERVAS, "wb"); //Crea archivo
+	fwrite(RESERVAS, sizeof(re), Tam_RESERVAS, PtrFile); //Escribe los datos
 	fclose(PtrFile); //Cierra
 }
 
