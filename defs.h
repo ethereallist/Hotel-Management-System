@@ -62,9 +62,9 @@ T_Hotel Categorias = {{{1, 1, 2, 2, 3},
                        {1, 1, 2, 2, 3}}};
 
 
-//Creo un """prototipo de vector""" para la Lista de las Reservas
-re * RESERVAS;
-int Tam_RESERVAS; 
+//Creo un """prototipo de vector""" para la Lista de las Reservas, y su tamaño
+re * RESERVAS; //NO BORRAR
+int Tam_RESERVAS; //NO BORRAR
 
 
 
@@ -83,6 +83,12 @@ int Tam_RESERVAS;
 int Iniciar();
 int Bienvenida();
 int MenuPrincipal();
+
+
+void OpcionAgregarReserva();
+void OpcionVerReservas();
+void OpcionModificarReserva();
+
 
 // FUNCIONES DE VALIDAR
 void Validar_Fecha(T_Fecha F, int *validar);
@@ -113,6 +119,7 @@ int WRITE_RESERVAS();
 
 // FUNCIONES TONTAS
 void Enter();
+void CualquierTecla();
 void LimpiarEntrada();
 void Limpiar();
 char Opcion();
@@ -144,13 +151,16 @@ int Iniciar()
 
 int Bienvenida()
 {	
+	Limpiar();
 	printf("Bienvenido al sistema de gestion del Hotel 'El Descanso del Páramo'\n");
+	Enter();
 }
 
 int MenuPrincipal()
 {
 	while(1)
 	{
+		Limpiar();
 		printf("1. Agregar reserva\n");
 		printf("2. Ver todas las reservas actuales\n");
 		printf("3. Modificar reserva\n");
@@ -159,28 +169,19 @@ int MenuPrincipal()
 		switch(Opcion()-48) //-48 por ser ascii
 		{
 			case 1:
-				Agrandar_RESERVAS();
-				scanReserva(&RESERVAS[Tam_RESERVAS-1]);
-				WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
+				OpcionAgregarReserva();
 				break;
 			
 			case 2:
-				for(int i = 0; i < Tam_RESERVAS; i++)
-				{
-					printf("\n-------------------------------------------\n");
-					printf("CLIENTE #%i\n", i+1);
-					printReserva(RESERVAS[i]);
-				}
+				OpcionVerReservas();
 				break;
 				
 			case 3:
-				printf("Qué reserva desea modificar?: #");
-				int i; 	scanf("%i", &i);
-				scanReserva(&RESERVAS[i-1]);
-				WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
+				OpcionModificarReserva();
 				break;
 			
 			case 0:
+				Limpiar();
 				return 0;
 				break;
 		}
@@ -191,9 +192,50 @@ int MenuPrincipal()
 
 
 
+void OpcionAgregarReserva()
+{
+	Agrandar_RESERVAS();
+	Limpiar();
+	scanReserva(&RESERVAS[Tam_RESERVAS-1]);
+	WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
+}
 
 
+void OpcionVerReservas()
+{
+	Limpiar();
+	for(int i = 0; i < Tam_RESERVAS; i++)
+	{
+		printf("\n-------------------------------------------\n");
+		printf("CLIENTE #%i\n", i+1);
+		printReserva(RESERVAS[i]);
+	}
+	Enter();
+	Enter();
+	
+}
 
+
+void OpcionModificarReserva()
+{
+	Limpiar();
+	printf("Qué reserva desea modificar?: ");
+	
+	
+	int i;
+	do
+	{
+		scanf("%i", &i);
+	}
+	while(!(i >= 1 && i <= Tam_RESERVAS));
+	
+	i--; //Uno menos porque vamos a trabajar con vectores
+	
+	printReserva(RESERVAS[i]);
+	scanReserva(&RESERVAS[i]);
+	WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
+	Enter();
+}
 
 
 
@@ -439,7 +481,6 @@ void scan_Num_Id(re * PtrReserva)
 	
 	do
 	{
-		
 		printf("Identificación: ");
 		scanf("%s", &Buffer);
 		LimpiarEntrada();
@@ -460,7 +501,6 @@ void scan_Personas_Totales(re * PtrReserva)
 	
 	do
 	{
-		
 		printf("Personas totales: ");
 		Buffer = getchar();
 		LimpiarEntrada();
@@ -688,6 +728,14 @@ int WRITE_RESERVAS()
 void Enter()
 {
 	while(getchar() != '\n');
+}
+
+void CualquierTecla()
+{
+	while(1)
+	{
+		printf("%i", getchar());
+	}
 }
 
 void LimpiarEntrada()
