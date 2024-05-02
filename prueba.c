@@ -24,10 +24,10 @@ int Validar_Fecha(date F)
     // VOY TIRANDO ERROR POR CADA FECHA INVALIDA
 
     //Año invalido
-    if (F.aa < 1583) return 0; //No se ponga a inventar, en el año ese se saltaron varios dias del calendario
+    //Acotacion: No voy a poner año invalido, PERO: para años muy anteriores, la fecha va a ser incorrecta, especialmente del 1583 para atras, pero esto puede incluso variar segun el país
     
     // Mes invalido
-	else if ( F.mm < 1 || F.mm > 12) return 0; 
+	if ( F.mm < 1 || F.mm > 12) return 0; 
 	
 	//Dia invalido
     else if (F.dd < 1 || F.dd > 31) return 0; 
