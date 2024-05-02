@@ -659,7 +659,7 @@ const char NombreArchivoRESERVAS[] = "reservas_data";
 
 int READ_RESERVAS()
 {
-	/DESCRIPCION: Lee la informacion del archivo y la pasa a RESERVAS/
+	//DESCRIPCION: Lee la informacion del archivo y la pasa a RESERVAS/
 	
 	FILE * PtrFile = fopen(NombreArchivoRESERVAS, "rb");
 	if( PtrFile == NULL)
@@ -690,7 +690,7 @@ int READ_RESERVAS()
 
 int WRITE_RESERVAS()
 {
-	/DESCRIPCION: Hace un archivo nuevo con lo que haya en RESEVAS/
+	//DESCRIPCION: Hace un archivo nuevo con lo que haya en RESEVAS/
 	
 	FILE * PtrFile = fopen(NombreArchivoRESERVAS, "wb"); //Crea archivo
 	fwrite(RESERVAS, sizeof(re), Tam_RESERVAS, PtrFile); //Escribe los datos
@@ -783,5 +783,5 @@ char Opcion()
 		}
 	}
 	while(FueAlgoDiferenteDeN == 0);
-	return chfinal;
+	return chfinal;
 }
