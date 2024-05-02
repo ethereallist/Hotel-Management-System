@@ -20,10 +20,13 @@ typedef struct
 	int dd;
 	int mm;
 	int aa;
-}T_Fecha;
+} date;
 
-
-
+typedef struct
+{
+	int Piso;
+	int Puerta;
+} hab;
 
 typedef struct 
 {
@@ -31,12 +34,11 @@ typedef struct
     char Apellido[50];
     int Numero_Id;
     int Personas_Totales;
-    T_Fecha Entrada;
-    T_Fecha Salida;
-    int Categoria;
-    int Num_Habitacion;
+    date Entrada;
+    date Salida;
+    hab Habitacion_Id;
     float Precio_Total;
-}re;
+} re;
 
 typedef struct
 {
@@ -91,7 +93,7 @@ void OpcionModificarReserva();
 
 
 // FUNCIONES DE VALIDAR
-void Validar_Fecha(T_Fecha F, int *validar);
+void Validar_Fecha(date F, int *validar);
 
 
 
@@ -104,7 +106,7 @@ void scan_Nombre(re * PtrReserva);
 void scan_Apellido(re * PtrReserva);
 void scan_Num_Id(re * PtrReserva);
 void scan_Personas_Totales(re * PtrReserva);
-void scan_Categoria(re * PtrReserva);
+void scan_Habitacion_Id(re * PtrReserva);
 void scan_Fecha_Entrada(re * PtrReserva);
 void scan_Fecha_Salida(re * PtrReserva);
 
@@ -271,7 +273,7 @@ void OpcionModificarReserva()
 
 
 //_____________________FUNCIONES DE VALIDACION______________
-void Validar_Fecha(T_Fecha F, int *validar)
+void Validar_Fecha(date F, int *validar)
 {
     // Excluir fechas invalidas
 
@@ -381,7 +383,7 @@ void printReserva(re Reserva)
     printf("Su apellido es: %s\n", Reserva.Apellido);
     printf("Su numero de ID es: %i\n", Reserva.Numero_Id);
     printf("Personas totales: %i\n", Reserva.Personas_Totales);
-    printf("Categoria de habitacion: %i\n", Reserva.Categoria);
+    printf("Habitacion: Piso %i. Puerta %i\n", Reserva.Habitacion_Id.Piso, Reserva.Habitacion_Id.Puerta);
     printf("Fecha de reserva: %i/%i/%i \n", Reserva.Entrada.dd, Reserva.Entrada.mm, Reserva.Entrada.aa);
     printf("Fecha de salida: %i/%i/%i \n", Reserva.Salida.dd, Reserva.Salida.mm, Reserva.Salida.aa);
     printf("-------------------------------------------\n");
@@ -395,7 +397,7 @@ void scanReserva(re * PtrReserva)
     
     scan_Num_Id(PtrReserva);
     scan_Personas_Totales(PtrReserva);
-    scan_Categoria(PtrReserva);
+    scan_Habitacion_Id(PtrReserva);
 	
 	scan_Fecha_Entrada(PtrReserva);
 	scan_Fecha_Salida(PtrReserva);
@@ -514,7 +516,7 @@ void scan_Personas_Totales(re * PtrReserva)
 }
 
 
-void scan_Categoria(re * PtrReserva)
+void scan_Habitacion_Id(re * PtrReserva)
 {
 	int Valido = 0;
 	char Buffer;
@@ -522,18 +524,32 @@ void scan_Categoria(re * PtrReserva)
 	
 	do
 	{
-		printf("Categoria de habitacion deseada\n");
-		printf("Seleccione su categoría de habitación:\n1. Habitación Sencilla\n2. Habitacion doble\n3. Habitacion triple\n");
+		printf("Seleccione el piso de su habitacion:");
 		Buffer = getchar();
 		LimpiarEntrada();
 		Aux = atoi(&Buffer);
 		
-		if(Aux >= 1 && Aux <= 3) Valido = 1; 
+		if(Aux >= 1 && Aux <= 4) Valido = 1; 
 	}
 	while(Valido != 1);
 	
-	(*PtrReserva).Categoria = Aux;
+	(*PtrReserva).Habitacion_Id.Piso= Aux;
 	
+	Valido = 0;
+	Buffer = 0;
+	Aux = 0;
+	do
+	{
+		printf("Seleccione la puerta de su habitacion:");
+		Buffer = getchar();
+		LimpiarEntrada();
+		Aux = atoi(&Buffer);
+		
+		if(Aux >= 1 && Aux <= 5) Valido = 1; 
+	}
+	while(Valido != 1);
+	
+	(*PtrReserva).Habitacion_Id.Puerta= Aux;
 }
 
 void scan_Fecha_Entrada(re * PtrReserva)
