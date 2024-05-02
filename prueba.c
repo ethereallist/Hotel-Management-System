@@ -87,7 +87,7 @@ void convertidor_a_dias_del_anio(re Reserva, int Fecha_Es_Valida, int Es_Bisiest
     if (Fecha_Es_Valida == 1 && Es_Bisiesto == 0)
     {
         
-        Dias_Totales_Estadia = Reserva.Entrada + Dias_Del_Anio_Normal[Indice_Mes];
+        Dias_Totales_Estadia = Reserva.Entrada + Dias_Del_Anio_Normal[Indice_Mes];//mejorar
         printf("El dia de entrada en dias del anio es: %i", Dias_Totales_Estadia);
     }
 
