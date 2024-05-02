@@ -34,6 +34,7 @@ void Mensaje_Error_Fecha_Bisiesto(date F)
 int Validar_Fecha(date F)
 {
     // VOY TIRANDO ERROR POR CADA FECHA INVALIDA
+
     // BUGS: al introducir un caracter se rompe. Al introducir mes 04,06,09 con el 0 no entra en la condicion.
     // Mes invalido
     if (F.mm < 1 || F.mm > 12)
@@ -49,11 +50,11 @@ int Validar_Fecha(date F)
         if (F.dd > 30)
             return 0; // Mes de 30 dias
     }
+    
+    //Excluir el los dias de febrero dependiendo de si es bisiesto o no
+    // Verificar las condiciones para determinar si es bisiesto
 
-    // Excluir el los dias de febrero dependiendo de si es bisiesto o no
-    //  Verificar las condiciones para determinar si es bisiesto
-
-    if ((F.aa % 4 == 0 && F.aa % 100 != 0) || (F.aa % 400 == 0)) // PARA VER SI SÍ ES BISIESTO
+    if ((F.aa % 4 == 0 && F.aa % 100 != 0) || (F.aa % 400 == 0)) //PARA VER SI SÍ ES BISIESTO
     {
         // Si estoy en el mes de febrero
         if (F.mm == 2 && !(F.dd >= 1) || !(F.dd <= 29))
@@ -102,9 +103,9 @@ int main()
         printf("Introduzca una fecha (DD/MM/AAAA): ");
         scanf("%i/%i/%i", &F.dd, &F.mm, &F.aa);
         LimpiarEntrada();
-        Fecha_Es_Valida = Validar_Fecha(F);
+        
     } while (Validar_Fecha(F) == 0);
-
+    
     printf("\nBonita Fecha ;)\n");
 
     convertidor_a_dias_del_anio(Reserva, Fecha_Es_Valida, );
