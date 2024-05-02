@@ -559,8 +559,8 @@ void scan_Fecha_Entrada(re * PtrReserva)
     do
     {
         scanf("%i/%i/%i", &(*PtrReserva).Entrada.dd, &(*PtrReserva).Entrada.mm, &(*PtrReserva).Entrada.aa);
-        Validar_Fecha((PtrReserva)->Entrada);
-    } while (Validar_Fecha((PtrReserva)->Entrada) == 1);
+        Validar_Fecha((*PtrReserva).Entrada);
+    } while (Validar_Fecha((*PtrReserva).Entrada) == 1);
 }
 
 void scan_Fecha_Salida(re * PtrReserva)
@@ -569,8 +569,8 @@ void scan_Fecha_Salida(re * PtrReserva)
     do
     {
         scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
-        Validar_Fecha((PtrReserva)->Salida);
-    } while (Validar_Fecha((PtrReserva)->Salida) == 1);
+        Validar_Fecha((*PtrReserva).Salida);
+    } while (Validar_Fecha((*PtrReserva).Salida) == 1);
 }
 
 

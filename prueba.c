@@ -7,6 +7,17 @@ typedef struct
     int aa;
 } date;
 
+typedef struct 
+{
+    char Nombre[50];
+    char Apellido[50];
+    int Numero_Id;
+    int Personas_Totales;
+    date Entrada;
+    date Salida;
+    float Precio_Total;
+} re;
+
 void LimpiarEntrada()
 {
 	for(char ch; ch != EOF && ch != '\n'; ch = fgetc(stdin));
@@ -61,6 +72,33 @@ int Validar_Fecha(date F)
     return 1;
 }
 
+void convertidor_a_dias_del_anio(re * Entrada, Fecha_Es_Valida)
+{
+    // Dias de cada mes en un anio normal
+
+    int enero = 0, 
+    febrero = 31, 
+    marzo = 59, 
+    abril = 90, 
+    mayo = 120, 
+    junio = 151, 
+    julio = 181, 
+    agosto = 212, 
+    septiembre = 243, 
+    octubre = 273, 
+    noviembre = 304, 
+    diciembre = 334;
+
+   int dias_del_anio_normal[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+   int dias_del_anio_bisiesto[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+
+   
+
+
+
+    // Dias de cada mes en un anio bisiesto
+}
+
 int main()
 {
     date F;
@@ -74,4 +112,6 @@ int main()
     } while (Validar_Fecha(F) == 0);
     
     printf("\nBonita Fecha ;)\n");
+
+    convertidor_a_dias_del_anio(re , Validar_Fecha(F));
 }
