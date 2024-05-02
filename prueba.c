@@ -23,9 +23,11 @@ int Validar_Fecha(date F)
 {
     // VOY TIRANDO ERROR POR CADA FECHA INVALIDA
 
-    // BUGS: al introducir un caracter se rompe. Al introducir mes 04,06,09 con el 0 no entra en la condicion.
+    //Año invalido
+    if (F.aa < 1583) return 0; //No se ponga a inventar, en el año ese se saltaron varios dias del calendario
+    
     // Mes invalido
-	if ( F.mm < 1 || F.mm > 12) return 0; 
+	else if ( F.mm < 1 || F.mm > 12) return 0; 
 	
 	//Dia invalido
     else if (F.dd < 1 || F.dd > 31) return 0; 
@@ -37,8 +39,6 @@ int Validar_Fecha(date F)
     }
     
     //Excluir el los dias de febrero dependiendo de si es bisiesto o no
-    // Verificar las condiciones para determinar si es bisiesto
-
     if ((F.aa % 4 == 0 && F.aa % 100 != 0) || (F.aa % 400 == 0)) //PARA VER SI SÍ ES BISIESTO
     {
         // Si estoy en el mes de febrero
@@ -71,7 +71,7 @@ int main()
         scanf("%i/%i/%i", &F.dd, &F.mm, &F.aa);
         LimpiarEntrada();
         
-    } while (Validar_Fecha(F) == 0);
+    } while (Validar_Fecha(F) == 0); //Si no es valida, repita
     
     printf("\nBonita Fecha ;)\n");
 }
