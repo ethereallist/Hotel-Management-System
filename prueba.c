@@ -96,6 +96,8 @@ int anio(T_Fecha F)
     }
 }
 
+
+
 int contar_dias(T_Fecha F)
 {
 }
