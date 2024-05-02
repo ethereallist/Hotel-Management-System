@@ -88,7 +88,7 @@ void convertidor_a_dias_del_anio(re Reserva, int Fecha_Es_Valida, int Es_Bisiest
     {
         
         Dias_Totales_Estadia = Reserva.Entrada + Dias_Del_Anio_Normal[Indice_Mes];//mejorar codigo
-        printf("El dia de entrada en dias del anio es: %i", Dias_Totales_Estadia);
+        printf("El dia de entrada en dias del anio es: %i", Dias_Totales_Estadia);//
     }
 
     // Dias de cada mes en un anio bisiesto
