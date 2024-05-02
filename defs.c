@@ -155,50 +155,48 @@ void OpcionModificarReserva()
 
 
 //_____________________FUNCIONES DE VALIDACION______________
-void Validar_Fecha(date F, int *validar)
+int Validar_Fecha(date F)
 {
-    // Excluir fechas invalidas
+    // VOY TIRANDO ERROR POR CADA FECHA INVALIDA
 
-    // BUGS: al introducir un caracter se rompe. Al introducir mes 04,06,09 con el 0 no entra en la condicion.
-
-    if (F.dd > 31 || F.dd < 1)
-    {
-        printf("Introduce un dia valido para reservar: \n");
-    }
-
+    //Año invalido
+    //Acotacion: No voy a poner año invalido, PERO: para años muy anteriores, la fecha va a ser incorrecta, especialmente del 1583 para atras, pero esto puede incluso variar segun el país
+    
+    // Mes invalido
+	if ( F.mm < 1 || F.mm > 12) return 0; 
+	
+	//Dia invalido
+    else if (F.dd < 1 || F.dd > 31) return 0; 
+    
     // Excluir los dias 31 de los meses abril, junio, septiembre y noviembre.
-
-    else if (F.mm == 4 || F.mm == 6 || F.mm == 9 || F.mm == 11)
+    else if (F.mm == 4 || F.mm == 6 || F.mm == 9 || F.mm == 11) 
     {
-        if (F.dd > 30)
+        if (F.dd > 30) return 0; //Mes de 30 dias
+    }
+    
+    //Excluir el los dias de febrero dependiendo de si es bisiesto o no
+    if ((F.aa % 4 == 0 && F.aa % 100 != 0) || (F.aa % 400 == 0)) //PARA VER SI SÍ ES BISIESTO
+    {
+        // Si estoy en el mes de febrero
+        if (F.mm == 2 && !(F.dd >= 1) || !(F.dd <= 29))
         {
-            printf("Este mes solo tiene 30 dias, escoja otro dia: ");
+            // Los dias deben estar (como es bisiesto) entre 1 y 29
+            return 0; // El año es bisiesto
         }
-        else if (F.aa < 2024)
-        {
-            printf("Introduce un año valido para reservar: \n");
-        }
-        else
-        {
-            *validar = 1;
-        }
+        
     }
-    else if (F.mm > 12 || F.mm < 1)
+    else if (F.mm == 2 && (F.dd > 28)) 
     {
-        printf("Introduce un mes valido para reservar: \n");
+            // Los dias deben estar (como es bisiesto) entre 1 y 29
+            return 0;
     }
-    else if (F.aa < 2024)
-    {
-        printf("Introduce un año valido para reservar: \n");
-    }
-
-    // Esto cambia la variable Fecha_Es_Valida del main para salir del bucle.
-
-    else
-    {
-        *validar = 1;
-    }
+    
+    
+    
+    //Si pasó TODAS LAS PRUEBAS, la fecha el valida:
+    return 1;
 }
+
 
 void Asignar_Categorias(T_Hotel Categorias)
 {
@@ -406,7 +404,7 @@ void scan_Habitacion_Id(re * PtrReserva)
 	
 	do
 	{
-		printf("Seleccione el piso de su habitacion:");
+		printf("Seleccione el piso de su habitacion: ");
 		Buffer = getchar();
 		LimpiarEntrada();
 		Aux = atoi(&Buffer);
@@ -422,7 +420,7 @@ void scan_Habitacion_Id(re * PtrReserva)
 	Aux = 0;
 	do
 	{
-		printf("Seleccione la puerta de su habitacion:");
+		printf("Seleccione la puerta de su habitacion: ");
 		Buffer = getchar();
 		LimpiarEntrada();
 		Aux = atoi(&Buffer);
@@ -436,23 +434,23 @@ void scan_Habitacion_Id(re * PtrReserva)
 
 void scan_Fecha_Entrada(re * PtrReserva)
 {
-	printf("Introduzca la fecha de entrada (DD/MM/AAAA): ");
     int Fecha_Es_Valida = 0;
     do
     {
+		printf("Introduzca la fecha de entrada (DD/MM/AAAA): ");
         scanf("%i/%i/%i", &(*PtrReserva).Entrada.dd, &(*PtrReserva).Entrada.mm, &(*PtrReserva).Entrada.aa);
-        Validar_Fecha((*PtrReserva).Entrada, &Fecha_Es_Valida);
+        Fecha_Es_Valida = Validar_Fecha((*PtrReserva).Entrada);
     } while (Fecha_Es_Valida == 0);
 }
 
 void scan_Fecha_Salida(re * PtrReserva)
 {
-	printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
 	int Fecha_Es_Valida = 0;
     do
     {
+		printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
         scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
-        Validar_Fecha((*PtrReserva).Salida, &Fecha_Es_Valida);
+        Fecha_Es_Valida = Validar_Fecha((*PtrReserva).Salida);
     } while (Fecha_Es_Valida == 0);
 }
 

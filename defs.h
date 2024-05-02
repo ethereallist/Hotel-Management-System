@@ -72,7 +72,7 @@ void OpcionModificarReserva();
 
 
 // FUNCIONES DE VALIDAR
-void Validar_Fecha(date F, int *validar);
+int Validar_Fecha(date F);
 
 
 
