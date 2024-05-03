@@ -71,8 +71,10 @@ void OpcionVerReservas();
 void OpcionModificarReserva();
 
 
-// FUNCIONES DE VALIDAR
+// FUNCIONES DE FECHA
 int Validar_Fecha(date F);
+int esBisiesto(date F);
+int convertidor_a_dias_del_anio(date F);
 
 
 
