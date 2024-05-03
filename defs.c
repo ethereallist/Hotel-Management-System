@@ -206,12 +206,10 @@ int esBisiesto(date F)
 
     if ((F.aa % 4 == 0 && F.aa % 100 != 0) || (F.aa % 400 == 0)) // PARA VER SI SÍ ES BISIESTO
     {
-        F.Extra.Es_Bisiesto = 1;
         return 1;
     }
     else
     {
-        F.Extra.Es_Bisiesto = 0;
         return 0;
     }
 }
@@ -321,6 +319,8 @@ void printReserva(re Reserva)
     printf("Habitacion: Piso %i. Puerta %i\n", Reserva.Habitacion_Id.Piso, Reserva.Habitacion_Id.Puerta);
     printf("Fecha de reserva: %i/%i/%i \n", Reserva.Entrada.dd, Reserva.Entrada.mm, Reserva.Entrada.aa);
     printf("Fecha de salida: %i/%i/%i \n", Reserva.Salida.dd, Reserva.Salida.mm, Reserva.Salida.aa);
+	printf("Dias del año entrada: %i \n", convertidor_a_dias_del_anio(Reserva.Entrada));
+	printf("Dias del año salida: %i \n", convertidor_a_dias_del_anio(Reserva.Salida));
     printf("-------------------------------------------\n");
 }
 
