@@ -22,11 +22,27 @@ typedef struct
 	int aa;
 } date;
 
+
+typedef struct
+{
+	int Categoria;
+	int Bool_Reservado;
+} habextra;
+
 typedef struct
 {
 	int Piso;
 	int Puerta;
+	habextra Extra;
 } hab;
+
+
+
+typedef struct 
+{
+	int Tiempo_Estadia;
+	int Precio_Total;
+} reextra;
 
 typedef struct 
 {
@@ -37,7 +53,7 @@ typedef struct
     date Entrada;
     date Salida;
     hab Habitacion_Id;
-    float Precio_Total;
+    reextra Extra;
 } re;
 
 typedef struct
@@ -73,8 +89,8 @@ void OpcionModificarReserva();
 
 // FUNCIONES DE FECHA
 int Validar_Fecha(date F);
-int esBisiesto(date F);
-int convertidor_a_dias_del_anio(date F);
+int Es_Bisiesto(int aa);
+int Dia_Anio(date F);
 
 
 

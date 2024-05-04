@@ -9,7 +9,7 @@ typedef struct
 
 
 //FUNCIONES
-int Dia_Del_Anio(date F);
+int Dia_Anio(date F);
 int Relacion_Fechas(date I, date F);
 int Restar_Fechas(date I, date F);
 int Validar_Fecha(date F);
@@ -22,8 +22,8 @@ int main()
 	date B = {1,10,2006};
 	date A = {4,5,2021};
 	
-	printf(" %i/%i\n", B.aa, Dia_Del_Anio(B));
-	printf("-%i/%i\n", A.aa, Dia_Del_Anio(A));
+	printf(" %i/%i\n", B.aa, Dia_Anio(B));
+	printf("-%i/%i\n", A.aa, Dia_Anio(A));
 	
 	int dias = Restar_Fechas(A, B);
 	printf("%i", dias);
@@ -69,8 +69,8 @@ int Relacion_Fechas(date I, date F)
 	if 		(I.aa > F.aa) 	return -1;
 	else if (I.aa == F.aa)
 	{
-		if(Dia_Del_Anio(I) > Dia_Del_Anio(F)) return -1;
-		else if(Dia_Del_Anio(I) == Dia_Del_Anio(F)) return 0;
+		if(Dia_Anio(I) > Dia_Anio(F)) return -1;
+		else if(Dia_Anio(I) == Dia_Anio(F)) return 0;
 	}
 	return 1;
 }
@@ -88,9 +88,9 @@ int Restar_Fechas(date I, date F) //A - B
 		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + ContarBisiestos(I.aa + 1, F.aa - 1);
 		
 		//Los cachitos
-		int CachitoF = Dia_Del_Anio(F);
+		int CachitoF = Dia_Anio(F);
 		
-		int CachitoI = 365 + Es_Bisiesto(I.aa) - Dia_Del_Anio(I);
+		int CachitoI = 365 + Es_Bisiesto(I.aa) - Dia_Anio(I);
 		
 		DiferenciaEnDias = CachitoI + DiasDeAniosDePorMedio + CachitoF - 1; //Para no contar el propio dia
 		
@@ -161,28 +161,28 @@ int Validar_Fecha(date F)
 }
 
 
-int Dia_Del_Anio(date F)
+int Dia_Anio(date F)
 {
     // Cada indice es un mes del anio y la cantidad de dias que equivalen en cada tipo de anio
 
-    int Dias_Del_Anio_Normal[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-    int Dias_Del_Anio_Bisiesto[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}; // Dias de cada mes en un anio bisiesto
+    int Dia_Anio_Normal[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    int Dia_Anio_Bisiesto[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}; // Dias de cada mes en un anio bisiesto
     int Indice_Mes = F.mm;
-    int Dias_Del_Anio;
+    int Dia_Anio;
     
     if (Validar_Fecha(F) == 1)
     {
         if(Es_Bisiesto(F.aa) == 1)
         {
             // Sumo los dias que ingreso el usuario + los dias que representa el mes en el anio
-            Dias_Del_Anio = F.dd + Dias_Del_Anio_Bisiesto[Indice_Mes-1];
+            Dia_Anio = F.dd + Dia_Anio_Bisiesto[Indice_Mes-1];
         }
         else
         {
-            Dias_Del_Anio = F.dd + Dias_Del_Anio_Normal[Indice_Mes-1];
+            Dia_Anio = F.dd + Dia_Anio_Normal[Indice_Mes-1];
         }
         
-        return Dias_Del_Anio;
+        return Dia_Anio;
     }
     else 
     {
