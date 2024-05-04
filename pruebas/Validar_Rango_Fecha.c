@@ -19,17 +19,17 @@ typedef struct
 } re;
 
 // FUNCIONES
-int Dia_Del_Anio(date F);
+int Dia_Anio(date F);
 int Restar_Fechas(date A, date B);
 int Validar_Fecha(date F);
-int esBisiesto(date F);
+int Es_Bisiesto(int F);
 int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date Salidados);
 
 // MAIN
 int main()
 {
     date Fecha_A = {1, 10, 2006};
-    date Fecha_B = {2, 5, 2024};
+    date Fecha_B = {1, 10, 2016};
     int dias = Restar_Fechas(Fecha_A, Fecha_B);
     printf("%i", dias);
 
@@ -48,47 +48,6 @@ int main()
 
 // FUNCIONES
 
-int Restar_Fechas(date A, date B)
-{
-    // Calcular el dia del año
-    int Da_A = Dia_Del_Anio(A);
-    int Da_B = Dia_Del_Anio(B);
-
-    int Anios = A.aa - B.aa;
-    int Dias = Da_A - Da_B;
-
-    // Hay que sumarle los dias extra
-    int DiasExtra = 0;
-
-    // Calculamos los que hay en ese intervalo
-    // Se calcularon viendo si este
-
-    // Si el primero es el mayor
-    for (int aa_Revisar = A.aa; aa_Revisar < B.aa; aa_Revisar++)
-    {
-        if ((aa_Revisar % 4 == 0 && aa_Revisar % 100 != 0) || (aa_Revisar % 400 == 0))
-        {
-            if (aa_Revisar == A.aa && Da_A != 366)
-            {
-                DiasExtra++; // Siempre qu hay un año bisiesto, hay un dia extra, puesto que hablamos de DÍAS DEL AÑO, no de fehca especifica, es decir, no es del (2020-mar-05) al (2021-mar-05) sino (2020-mar-05 al (2021-mar-06), puesto que estos últimos SÍ representan el mismo dia del año.
-            }
-        }
-    }
-
-    // Si el segundo es mayor
-    for (int aa_Revisar = B.aa - 1; A.aa <= aa_Revisar; aa_Revisar--)
-    {
-        if ((aa_Revisar % 4 == 0 && aa_Revisar % 100 != 0) || (aa_Revisar % 400 == 0))
-        {
-            if (aa_Revisar == A.aa && Da_A != 366)
-            {
-                DiasExtra--; // Siempre qu hay un año bisiesto, hay un dia extra, puesto que hablamos de DÍAS DEL AÑO, no de fehca especifica, es decir, no es del (2020-mar-05) al (2021-mar-05) sino (2020-mar-05 al (2021-mar-06), puesto que estos últimos SÍ representan el mismo dia del año.
-            }
-        }
-    }
-
-    int Resultado = Anios + Dias + DiasExtra;
-}
 
 //_____________________FUNCIONES DE FECHA______________
 
@@ -96,96 +55,162 @@ int Validar_Fecha(date F)
 {
     // VOY TIRANDO ERROR POR CADA FECHA INVALIDA
 
-    // Año invalido
-    if (F.aa < 1800)
-        return 0; // No se ponga a inventar
-
-    // Mes invalido
-    else if (F.mm < 1 || F.mm > 12)
-        return -1;
-
-    // Dia invalido
-    else if (F.dd < 1 || F.dd > 31)
-        return -2;
-
-    // Excluir los dias 31 de los meses abril, junio, septiembre y noviembre.
-    else if (F.mm == 4 || F.mm == 6 || F.mm == 9 || F.mm == 11)
-    {
-        if (F.dd > 30)
-            return -3; // Mes de 30 dias
-    }
-
-    // Excluir el los dias de febrero dependiendo de si es bisiesto o no
-    else if (F.mm == 2 && esBisiesto(F) == 1) // PARA VER SI SÍ ES BISIESTO
-    {
-        if (F.dd > 29)
-        {
-            // Los dias deben estar (como es bisiesto) entre 1 y 29
-            return -4; // El año es bisiesto
-        }
-    }
-    else if (F.dd > 28)
-    {
-        // Los dias deben estar (como es bisiesto) entre 1 y 29
-        return -5;
-    }
-
-    // Si paso TODAS LAS PRUEBAS, la fecha el valida:
+    if (F.aa < 1800) 						return 0; // AÑO "INVALIDO"
+	else
+	{
+		if ( F.mm < 1 || F.mm > 12) 		return -1; // MES INVALIDO
+		else
+		{
+			//Dia invalido
+			if (F.dd < 1) 					return -2; // DIA INVALIDO (No es positivo)
+			else
+			{
+				
+				//MESES DE 31 DÍAS
+				if (F.mm == 1 || F.mm == 3 || F.mm == 5 || F.mm == 7 || F.mm == 8 || F.mm == 10 || F.mm == 12) 
+				{
+					if (F.dd > 31) 			return -3; // DÍA INVALIDO (muy grande para mes de 31 dias)
+				}
+				//MESES DE 30 DÍAS
+				else if (F.mm == 4 || F.mm == 6 || F.mm == 9 || F.mm == 11) 
+				{
+					if (F.dd > 30)			return -4; // DÍA INVALIDO (muy grande para mes de 30 dias)
+				}
+				//FEBRERO
+				else if (F.mm == 2)
+				{
+					if(Es_Bisiesto(F.aa))
+					{
+						if (F.dd > 29) 		return -5; // DÍA INVALIDO (muy grande para mes de 29 dias)
+					}
+					else
+					{
+						if (F.dd > 28) 		return -6; // DÍA INVALIDO (muy grande para mes de 28 dias)
+					}
+					
+				}
+				else 						return -7; // DÍA INVALIDO
+			}
+		}
+	}
+    
+    
+    //Si paso TODAS LAS PRUEBAS, la fecha el valida:
     return 1;
 }
 
-int esBisiesto(date F)
-{
-    // Verificar las condiciones para determinar si es bisiesto
 
-    if ((F.aa % 4 == 0 && F.aa % 100 != 0) || (F.aa % 400 == 0)) // PARA VER SI SÍ ES BISIESTO
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+
+int Es_Bisiesto(int aa)
+{
+	return (aa % 4 == 0 && aa % 100 != 0) || (aa % 400 == 0);
 }
 
-int Dia_Del_Anio(date F)
+
+int Dia_Anio(date F)
 {
     // Cada indice es un mes del anio y la cantidad de dias que equivalen en cada tipo de anio
 
-    int Dias_Del_Anio_Normal[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-
+    int Dia_Anio_Normal[12] = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+    
     // Dias de cada mes en un anio bisiesto
-    int Dias_Del_Anio_Bisiesto[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
-    int Dias_Totales_Estadia = 0, Indice_Mes = F.mm;
-    int Dias_Del_Anio;
-
+    int Dia_Anio_Bisiesto[12] = {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335};
+    int Indice_Mes = F.mm;
+    int dda; //Dia del año
+    
     if (Validar_Fecha(F) == 1)
     {
-        if (esBisiesto(F) == 1)
+        if(Es_Bisiesto(F.aa) == 1)
         {
             // Sumo los dias que ingreso el usuario + los dias que representa el mes en el anio
-            Dias_Del_Anio = F.dd + Dias_Del_Anio_Bisiesto[Indice_Mes - 1];
+            dda = F.dd + Dia_Anio_Bisiesto[Indice_Mes-1];
         }
         else
         {
-            Dias_Del_Anio = F.dd + Dias_Del_Anio_Normal[Indice_Mes - 1];
+            dda = F.dd + Dia_Anio_Normal[Indice_Mes-1];
         }
-
-        return Dias_Del_Anio;
+        
+        return dda;
     }
-    else
+    else 
     {
         return 0;
     }
+    
+}
+
+
+int Contar_Bisiestos(int aaI, int aaF)
+{
+	int Num;
+	if(aaI < aaF)
+	{
+		Num = Es_Bisiesto(aaI) + Contar_Bisiestos(aaI+1, aaF);
+	}
+	else if (aaI == aaF)
+	{
+		Num = Es_Bisiesto(aaI);			//Condicion de parada
+	}
+	else if (aaI > aaF)
+	{
+		Num = -Contar_Bisiestos(aaF, aaI);
+	}
+	
+	return Num;
+}
+
+
+int Relacion_Fechas(date I, date F)
+{
+	//Voy matando
+	if 		(I.aa > F.aa) 	return -1;
+	else if (I.aa == F.aa)
+	{
+		if(Dia_Anio(I) > Dia_Anio(F)) return -1;
+		else if(Dia_Anio(I) == Dia_Anio(F)) return 0;
+	}
+	return 1;
+}
+
+
+int Restar_Fechas(date I, date F) //F - I
+{
+	int DiferenciaEnDias = 0;
+	int Relacion = Relacion_Fechas(I, F);
+	
+	if (Relacion == 1)
+	{
+		//Los años
+		int AniosDePorMedio = F.aa - I.aa - 1;
+		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + Contar_Bisiestos(I.aa + 1, F.aa - 1);
+		
+		//Los cachitos
+		int CachitoF = Dia_Anio(F);
+		
+		int CachitoI = 365 + Es_Bisiesto(I.aa) - Dia_Anio(I);
+		
+		DiferenciaEnDias = CachitoI + DiasDeAniosDePorMedio + CachitoF - 1; //Para no contar el propio dia
+		
+	}
+	else if (Relacion == 0)
+	{
+		DiferenciaEnDias = 0;
+	}
+	else if (Relacion == -1)
+	{
+		DiferenciaEnDias = -Restar_Fechas(F, I);
+	}
+	
+	return DiferenciaEnDias;
 }
 
 int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date Salidados)
 {
 
-    int Entrada_uno = Dia_Del_Anio(Entradauno);
-    int Salida_uno = Dia_Del_Anio(Salidauno);
-    int Entrada_dos = Dia_Del_Anio(Entradados);
-    int Salida_dos = Dia_Del_Anio(Salidados);
+    int Entrada_uno = Dia_Anio(Entradauno);
+    int Salida_uno = Dia_Anio(Salidauno);
+    int Entrada_dos = Dia_Anio(Entradados);
+    int Salida_dos = Dia_Anio(Salidados);
 
     printf("\nEntrada uno vale: %i", Entrada_uno);
     printf("\nSalida uno vale: %i", Salida_uno);
