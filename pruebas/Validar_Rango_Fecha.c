@@ -34,12 +34,12 @@ int main()
     printf("%i", dias);
 
     // Fechas de la habitacion reservacion recien hecha
-    date Entradauno = {31, 12, 2023};
-    date Salidauno = {10, 2, 2024};
+    date Entradauno = {6, 8, 2005};
+    date Salidauno = {31, 12, 2015};
 
     // Fechas de una reservacion pasada "n"
-    date Entradados = {1, 1, 2024};
-    date Salidados = {5, 2, 2024};
+    date Entradados = {6, 8, 2006};
+    date Salidados = {31, 12, 2010};
 
     Validar_Rango_Fecha(Entradauno, Salidauno, Entradados, Salidados);
 
@@ -191,6 +191,7 @@ int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date S
     printf("\nSalida uno vale: %i", Salida_uno);
     printf("\nEntrada dos vale: %i", Entrada_dos);
     printf("\nSalida dos vale: %i", Salida_dos);
+
     // Comprueba que las fechas no coincidan entre si, comparando la fecha de entrada y la de salida (1) con la fecha de entrada (2) de otra reserva
     // Y tambien compara la fecha de entrada y la de salida (1) con la fecha de salida (2) de otra reserva
 
@@ -217,4 +218,9 @@ int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date S
     }
 
     //Falta verificar que es el mismo anio
+}
+
+void Scan_Date()
+{
+    ;
 }
