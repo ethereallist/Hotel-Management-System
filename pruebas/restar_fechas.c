@@ -10,7 +10,7 @@ typedef struct
 
 //FUNCIONES
 int Dia_Anio(date F);
-int Relacion_Fechas(date I, date F);
+int Comparar_Fechas(date I, date F);
 int Restar_Fechas(date I, date F);
 int Validar_Fecha(date F);
 int Es_Bisiesto(int aa);
@@ -63,7 +63,7 @@ int Contar_Bisiestos(int aaI, int aaF)
 }
 
 
-int Relacion_Fechas(date I, date F)
+int Comparar_Fechas(date I, date F)
 {
 	//Voy matando
 	if 		(I.aa > F.aa) 	return -1;
@@ -79,7 +79,7 @@ int Relacion_Fechas(date I, date F)
 int Restar_Fechas(date I, date F) //A - B
 {
 	int DiferenciaEnDias = 0;
-	int Relacion = Relacion_Fechas(I, F);
+	int Relacion = Comparar_Fechas(I, F);
 	
 	if (Relacion == 1)
 	{

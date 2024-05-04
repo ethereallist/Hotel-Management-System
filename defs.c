@@ -265,7 +265,7 @@ int Contar_Bisiestos(int aaI, int aaF)
 }
 
 
-int Relacion_Fechas(date I, date F)
+int Comparar_Fechas(date I, date F)
 {
 	//Voy matando
 	if 		(I.aa > F.aa) 	return -1;
@@ -281,7 +281,7 @@ int Relacion_Fechas(date I, date F)
 int Restar_Fechas(date I, date F) //F - I
 {
 	int DiferenciaEnDias = 0;
-	int Relacion = Relacion_Fechas(I, F);
+	int Relacion = Comparar_Fechas(I, F);
 	
 	if (Relacion == 1)
 	{
@@ -309,6 +309,56 @@ int Restar_Fechas(date I, date F) //F - I
 	return DiferenciaEnDias;
 }
 
+int Fecha_En_El_Rango_Abierto(date I, date F, date X)
+{
+	// Significa Inicio -> FechaX -> Final
+	// En ese orden
+	int X_Esta_En_El_Rango = 0;
+	if (Comparar_Fechas(I, F) == 1)
+	{
+		X_Esta_En_El_Rango = Comparar_Fechas(I, X) == 1 && Comparar_Fechas(X, F) == 1;
+	}
+	else if (Comparar_Fechas(I, F) == 0)
+	{
+		X_Esta_En_El_Rango = 0;
+	}
+	else if (Comparar_Fechas(I, F) == -1)
+	{
+		X_Esta_En_El_Rango = Fecha_En_El_Rango_Abierto(F, I, X);
+	}
+	
+	return X_Esta_En_El_Rango;
+}
+
+
+int Fecha_En_El_Rango_Cerrado(date I, date F, date X)
+{
+	// Significa Inicio > FechaX > Final
+	// En ese orden
+	int X_Esta_En_El_Rango = 0;
+	if (Comparar_Fechas(I, F) == 1)
+	{
+		X_Esta_En_El_Rango = Comparar_Fechas(I, X) == 1 && Comparar_Fechas(X, F) == 1;
+	}
+	else if (Comparar_Fechas(I, F) == 0)
+	{
+		X_Esta_En_El_Rango = 0;
+	}
+	else if (Comparar_Fechas(I, F) == -1)
+	{
+		X_Esta_En_El_Rango = Fecha_En_El_Rango_Abierto(F, I, X);
+	}
+	
+	return X_Esta_En_El_Rango;
+}
+
+
+
+int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida2)
+{
+	// E2 está entre E1 y F1?    o    F2 está entre E1 y F1? 
+	return Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Entrada2) || Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Salida2);
+}
 
 
 
@@ -404,9 +454,9 @@ void scanReserva(re * PtrReserva)
     
     scan_Num_Id(PtrReserva);
     scan_Personas_Totales(PtrReserva);
-    scan_Habitacion_Id(PtrReserva);
+    
+    scan_Habitacion_Fecha(PtrReserva);
 	
-	scan_Fecha_Entrada_Salida(PtrReserva);
 }
 
 //_________________________SUB-FUNCIONES DE SCANRESERVA()_________________________
@@ -522,6 +572,34 @@ void scan_Personas_Totales(re * PtrReserva)
 }
 
 
+
+
+
+
+// ___________________________________________HABITACION Y FECHA____________
+
+void scan_Habitacion_Fecha(re * PtrReserva)
+{
+	int Disponible = 0;
+    
+    do
+    {
+		scan_Habitacion_Id(PtrReserva);
+		scan_Fecha_Entrada_Salida(PtrReserva);
+		int Disponible = ValidarDisponibilidad(PtrReserva);
+		
+		
+	}
+	while (Disponible != 1);
+}
+
+
+
+
+
+
+
+
 void scan_Habitacion_Id(re * PtrReserva)
 {
 	int Valido = 0;
@@ -572,23 +650,106 @@ void scan_Fecha_Entrada_Salida(re * PtrReserva)
 		printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
         scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
         
-        int Entrada__Salida = Relacion_Fechas((*PtrReserva).Entrada, (*PtrReserva).Salida);
-
-        if(Entrada__Salida != 1)
-        {
-			printf("(Introduza una fecha de salida posterior a la de entrada)\n");
-		}
+        int Entrada__Salida = Comparar_Fechas((*PtrReserva).Entrada, (*PtrReserva).Salida);
+		
+        //~ if(Entrada__Salida != 1)
+        //~ {
+			//~ printf("(Introduza una fecha de salida posterior a la de entrada)\n");
+		//~ }
     }
     while (!(Validar_Fecha((*PtrReserva).Salida) == 1 && Entrada__Salida != 1));
 }
 
-void scan_Fecha_Salida(re * PtrReserva)
+
+
+
+
+
+// DISPONIBILIDAD
+
+int ValidarDisponibilidad(re * PtrReserva)
 {
-    do
-    {
-		printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
-        scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
-    } while ( Validar_Fecha((*PtrReserva).Salida) != 1);
+	int Disponible = 1;
+	int NoDisponible = 0;
+	for (int i = 0; i < Tam_RESERVAS - 1; i++)
+	{
+		if ((*PtrReserva).Habitacion_Id.Piso == RESERVAS[i].Habitacion_Id.Piso && (*PtrReserva).Habitacion_Id.Puerta == RESERVAS[i].Habitacion_Id.Puerta)
+		{
+			NoDisponible += Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida);
+			
+			if(NoDisponible == 1)
+			{
+				printf("Ya hay reservas en ese rango:\n");
+				LimpiarEntrada();
+				Enter();
+			}
+			
+			if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+			{
+				printReserva(RESERVAS[i]);
+			}
+			
+			if (i == Tam_RESERVAS - 2)
+			{
+				LimpiarEntrada();
+				Enter();
+			}
+		}
+	}
+	
+	Disponible = !NoDisponible;
+	return Disponible;
+}
+
+
+//~ void printReservasYaHechas(re * PtrReserva)
+//~ {
+	//~ printf("Reservas ya hechas:\n");
+	//~ (*PtrReserva).Entrada.dd = 0;
+	//~ (*PtrReserva).Entrada.mm = 0;
+	//~ (*PtrReserva).Entrada.aa = 0;
+	//~ (*PtrReserva).Salida.dd = 0;
+	//~ (*PtrReserva).Salida.mm = 0;
+	//~ (*PtrReserva).Salida.aa = 0;
+	
+	//~ int Disponible = 1;
+	//~ int NoDisponible = 0;
+	//~ for (int i = 0; i < Tam_RESERVAS-1; i++)
+	//~ {
+		//~ if ((*PtrReserva).Habitacion_Id.Piso == RESERVAS[i].Habitacion_Id.Piso && (*PtrReserva).Habitacion_Id.Puerta == RESERVAS[i].Habitacion_Id.Puerta)
+		//~ {
+			//~ if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+			//~ {
+				//~ printReserva(*PtrReserva);
+			//~ }
+		//~ }
+	//~ }
+//~ }
+
+//~ VerHabitacionesPorCategoria(
+
+//Ver habitaciones ocupadas en un rango de fechas
+void VerHabitacionesPorId(date Entrada, date Salida)
+{
+	printf("Reservas hechas para %i/%i/%i a %i/%i/%i", Entrada.dd, Entrada.mm, Entrada.aa, Salida.dd, Salida.mm, Salida.aa);
+	for (int i = 0; i < Tam_RESERVAS; i++)
+	{
+		if (!Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+		{
+			printReserva(RESERVAS[i]);
+		}
+	}
+}
+
+void VerFechas(hab Habitacion)
+{
+	for (int i = 0; i < Tam_RESERVAS; i++)
+	{
+		if (Habitacion.Piso == RESERVAS[i].Habitacion_Id.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion_Id.Puerta)
+		{
+			printReserva(RESERVAS[i]);
+		}
+	}
 }
 
 

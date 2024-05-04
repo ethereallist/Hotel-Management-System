@@ -23,25 +23,35 @@ int Dia_Anio(date F);
 int Restar_Fechas(date A, date B);
 int Validar_Fecha(date F);
 int Es_Bisiesto(int F);
-int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date Salidados);
+int Fecha_En_El_Rango_Abierto(date I, date F, date X);
+int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida2);
 
 // MAIN
 int main()
 {
-    date Fecha_A = {1, 10, 2006};
-    date Fecha_B = {1, 10, 2016};
-    int dias = Restar_Fechas(Fecha_A, Fecha_B);
-    printf("%i", dias);
+    //~ date Fecha_A = {1, 10, 2006};
+    //~ date Fecha_B = {1, 10, 2016};
+    //~ int dias = Restar_Fechas(Fecha_A, Fecha_B);
+    //~ printf("%i", dias);
+
+	
 
     // Fechas de la habitacion reservacion recien hecha
-    date Entradauno = {31, 12, 2023};
-    date Salidauno = {10, 2, 2024};
+    date Entrada1 = {31, 1, 2023};
+    date Salida1 = {10, 12, 2024};
 
     // Fechas de una reservacion pasada "n"
-    date Entradados = {1, 1, 2024};
-    date Salidados = {5, 2, 2024};
-
-    Validar_Rango_Fecha(Entradauno, Salidauno, Entradados, Salidados);
+    date Entrada2 = {1, 1, 2024};
+    date Salida2 = {5, 2, 2024};
+	//~ if (Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Entrada2))
+    if(Las_Fechas_Coinciden(Entrada1, Salida1, Entrada2, Salida2))
+    {
+		printf("Tu ta loco");
+	}
+	else
+	{
+		printf("Fino, pasa");
+	}
 
     return 0;
 }
@@ -160,7 +170,7 @@ int Contar_Bisiestos(int aaI, int aaF)
 }
 
 
-int Relacion_Fechas(date I, date F)
+int Comparar_Fechas(date I, date F)
 {
 	//Voy matando
 	if 		(I.aa > F.aa) 	return -1;
@@ -176,7 +186,7 @@ int Relacion_Fechas(date I, date F)
 int Restar_Fechas(date I, date F) //F - I
 {
 	int DiferenciaEnDias = 0;
-	int Relacion = Relacion_Fechas(I, F);
+	int Relacion = Comparar_Fechas(I, F);
 	
 	if (Relacion == 1)
 	{
@@ -204,13 +214,13 @@ int Restar_Fechas(date I, date F) //F - I
 	return DiferenciaEnDias;
 }
 
-int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date Salidados)
+int Validar_Rango_Fecha(date EntradaUno, date SalidaUno, date EntradaDos, date SalidaDos)
 {
 
-    int Entrada_uno = Dia_Anio(Entradauno);
-    int Salida_uno = Dia_Anio(Salidauno);
-    int Entrada_dos = Dia_Anio(Entradados);
-    int Salida_dos = Dia_Anio(Salidados);
+    int Entrada_uno = Dia_Anio(EntradaUno);
+    int Salida_uno = Dia_Anio(SalidaUno);
+    int Entrada_dos = Dia_Anio(EntradaDos);
+    int Salida_dos = Dia_Anio(SalidaDos);
 
     printf("\nEntrada uno vale: %i", Entrada_uno);
     printf("\nSalida uno vale: %i", Salida_uno);
@@ -229,8 +239,11 @@ int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date S
     //     printf("Nada.");
     //     return 0;
     // }
-
-     if (Salida_uno > Entrada_dos || Entrada_uno == Entrada_dos && Salida_uno == Salida_dos)
+	
+	RelacionE2_S1 = Comparar_Fechas(EntradaDos, SalidaUno);
+	RelacionE1_S2 = Comparar_Fechas(EntradaDos, SalidaUno);
+	
+     if (RelacionE2_S1 == 1 || Comparar_Fechas(EntradaUno, EntradaDos) == 0 && Comparar_Fechas(SalidaUno, SalidaDos) == 0)
     {
         printf("\nLas fechas coinciden, esta habitacion no está disponible en esa fecha. Buscaremos otra.");
         return 1;
@@ -242,4 +255,32 @@ int Validar_Rango_Fecha(date Entradauno, date Salidauno, date Entradados, date S
     }
 
     //Falta verificar que es el mismo anio
+}
+
+int Fecha_En_El_Rango_Abierto(date I, date F, date X)
+{
+	// Significa Inicio -> FechaX -> Final
+	// En ese orden
+	int X_Esta_En_El_Rango = 0;
+	if (Comparar_Fechas(I, F) == 1)
+	{
+		X_Esta_En_El_Rango = Comparar_Fechas(I, X) == 1 && Comparar_Fechas(X, F) == 1;
+	}
+	else if (Comparar_Fechas(I, F) == 0)
+	{
+		X_Esta_En_El_Rango = 0;
+	}
+	else if (Comparar_Fechas(I, F) == -1)
+	{
+		X_Esta_En_El_Rango = Fecha_En_El_Rango_Abierto(F, I, X);
+	}
+	
+	return X_Esta_En_El_Rango;
+}
+
+
+int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida2)
+{
+	// E2 está entre E1 y F1?    o    F2 está entre E1 y F1? 
+	return Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Entrada2) || Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Salida2);
 }
