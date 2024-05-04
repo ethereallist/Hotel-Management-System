@@ -4,10 +4,15 @@
 // Hay que declararlas aquí o sino no sirve
 
 // Asigno las categorias por defecto preexistentes en el hotel
-T_Hotel Categorias = {{{1, 1, 2, 2, 3},
-                       {1, 1, 2, 2, 3},
-                       {1, 1, 2, 2, 3},
-                       {1, 1, 2, 2, 3}}};
+int Hotel[4][5] = {{1, 1, 2, 2, 3},
+                   {1, 1, 2, 2, 3},
+                   {1, 1, 2, 2, 3},
+                   {1, 1, 2, 2, 3}};
+
+int Categorias_Precios[4] = {0, 50, 70, 90}
+
+int Comision_Persona_Extra = 10;
+
 
 
 //Creo un """prototipo de vector""" para la Lista de las Reservas, y su tamaño
@@ -359,8 +364,6 @@ int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida
 	// E2 está entre E1 y F1?    o    F2 está entre E1 y F1? 
 	return Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Entrada2) || Fecha_En_El_Rango_Abierto(Entrada1, Salida1, Salida2);
 }
-
-
 
 
 
