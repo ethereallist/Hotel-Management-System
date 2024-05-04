@@ -245,12 +245,12 @@ int Dia_Anio(date F)
 }
 
 
-int ContarBisiestos(int aaI, int aaF)
+int Contar_Bisiestos(int aaI, int aaF)
 {
 	int Num;
 	if(aaI < aaF)
 	{
-		Num = Es_Bisiesto(aaI) + ContarBisiestos(aaI+1, aaF);
+		Num = Es_Bisiesto(aaI) + Contar_Bisiestos(aaI+1, aaF);
 	}
 	else if (aaI == aaF)
 	{
@@ -258,7 +258,7 @@ int ContarBisiestos(int aaI, int aaF)
 	}
 	else if (aaI > aaF)
 	{
-		Num = -ContarBisiestos(aaF, aaI);
+		Num = -Contar_Bisiestos(aaF, aaI);
 	}
 	
 	return Num;
@@ -287,7 +287,7 @@ int Restar_Fechas(date I, date F) //F - I
 	{
 		//Los años
 		int AniosDePorMedio = F.aa - I.aa - 1;
-		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + ContarBisiestos(I.aa + 1, F.aa - 1);
+		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + Contar_Bisiestos(I.aa + 1, F.aa - 1);
 		
 		//Los cachitos
 		int CachitoF = Dia_Anio(F);
@@ -406,8 +406,7 @@ void scanReserva(re * PtrReserva)
     scan_Personas_Totales(PtrReserva);
     scan_Habitacion_Id(PtrReserva);
 	
-	scan_Fecha_Entrada(PtrReserva);
-	scan_Fecha_Salida(PtrReserva);
+	scan_Fecha_Entrada_Salida(PtrReserva);
 }
 
 //_________________________SUB-FUNCIONES DE SCANRESERVA()_________________________
@@ -559,13 +558,28 @@ void scan_Habitacion_Id(re * PtrReserva)
 	(*PtrReserva).Habitacion_Id.Puerta= Aux;
 }
 
-void scan_Fecha_Entrada(re * PtrReserva)
+void scan_Fecha_Entrada_Salida(re * PtrReserva)
 {
     do
     {
 		printf("Introduzca la fecha de entrada (DD/MM/AAAA): ");
         scanf("%i/%i/%i", &(*PtrReserva).Entrada.dd, &(*PtrReserva).Entrada.mm, &(*PtrReserva).Entrada.aa);
 	} while ( Validar_Fecha((*PtrReserva).Entrada) != 1);
+	
+	int Entrada__Salida = 0;
+	do
+    {
+		printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
+        scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
+        
+        int Entrada__Salida = Relacion_Fechas((*PtrReserva).Entrada, (*PtrReserva).Salida);
+
+        if(Entrada__Salida != 1)
+        {
+			printf("(Introduza una fecha de salida posterior a la de entrada)\n");
+		}
+    }
+    while (!(Validar_Fecha((*PtrReserva).Salida) == 1 && Entrada__Salida != 1));
 }
 
 void scan_Fecha_Salida(re * PtrReserva)

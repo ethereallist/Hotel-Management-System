@@ -91,7 +91,9 @@ void OpcionModificarReserva();
 int Validar_Fecha(date F);
 int Es_Bisiesto(int aa);
 int Dia_Anio(date F);
-
+int Contar_Bisiestos(int aaI, int aaF);
+int Relacion_Fechas(date I, date F);
+int Restar_Fechas(date I, date F); //F - I
 
 
 // FUNCIONES PARA T_RESERVA
@@ -104,7 +106,7 @@ void scan_Apellido(re * PtrReserva);
 void scan_Num_Id(re * PtrReserva);
 void scan_Personas_Totales(re * PtrReserva);
 void scan_Habitacion_Id(re * PtrReserva);
-void scan_Fecha_Entrada(re * PtrReserva);
+void scan_Fecha_Entrada_Salida(re * PtrReserva);
 void scan_Fecha_Salida(re * PtrReserva);
 
 
