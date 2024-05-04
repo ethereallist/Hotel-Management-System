@@ -10,11 +10,11 @@ typedef struct
 
 //FUNCIONES
 int Dia_Anio(date F);
-int Relacion_Fechas(date I, date F);
+int Comparar_Fechas(date I, date F);
 int Restar_Fechas(date I, date F);
 int Validar_Fecha(date F);
 int Es_Bisiesto(int aa);
-int ContarBisiestos(int aaI, int aaF);
+int Contar_Bisiestos(int aaI, int aaF);
 
 //MAIN
 int main()
@@ -43,12 +43,12 @@ int Es_Bisiesto(int aa)
 }
 
 
-int ContarBisiestos(int aaI, int aaF)
+int Contar_Bisiestos(int aaI, int aaF)
 {
 	int Num;
 	if(aaI < aaF)
 	{
-		Num = Es_Bisiesto(aaI) + ContarBisiestos(aaI+1, aaF);
+		Num = Es_Bisiesto(aaI) + Contar_Bisiestos(aaI+1, aaF);
 	}
 	else if (aaI == aaF)
 	{
@@ -56,14 +56,14 @@ int ContarBisiestos(int aaI, int aaF)
 	}
 	else if (aaI > aaF)
 	{
-		Num = -ContarBisiestos(aaF, aaI);
+		Num = -Contar_Bisiestos(aaF, aaI);
 	}
 	
 	return Num;
 }
 
 
-int Relacion_Fechas(date I, date F)
+int Comparar_Fechas(date I, date F)
 {
 	//Voy matando
 	if 		(I.aa > F.aa) 	return -1;
@@ -79,13 +79,13 @@ int Relacion_Fechas(date I, date F)
 int Restar_Fechas(date I, date F) //A - B
 {
 	int DiferenciaEnDias = 0;
-	int Relacion = Relacion_Fechas(I, F);
+	int Relacion = Comparar_Fechas(I, F);
 	
 	if (Relacion == 1)
 	{
 		//Los años
 		int AniosDePorMedio = F.aa - I.aa - 1;
-		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + ContarBisiestos(I.aa + 1, F.aa - 1);
+		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + Contar_Bisiestos(I.aa + 1, F.aa - 1);
 		
 		//Los cachitos
 		int CachitoF = Dia_Anio(F);

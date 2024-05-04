@@ -41,6 +41,7 @@ typedef struct
 typedef struct 
 {
 	int Tiempo_Estadia;
+	//~ int Categoria;
 	int Precio_Total;
 } reextra;
 
@@ -91,8 +92,11 @@ void OpcionModificarReserva();
 int Validar_Fecha(date F);
 int Es_Bisiesto(int aa);
 int Dia_Anio(date F);
-
-
+int Contar_Bisiestos(int aaI, int aaF);
+int Comparar_Fechas(date I, date F);
+int Restar_Fechas(date I, date F); //F - I
+int Fecha_En_El_Rango_Abierto(date I, date F, date X);
+int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida2);
 
 // FUNCIONES PARA T_RESERVA
 void printReserva(re Reserva);
@@ -103,10 +107,16 @@ void scan_Nombre(re * PtrReserva);
 void scan_Apellido(re * PtrReserva);
 void scan_Num_Id(re * PtrReserva);
 void scan_Personas_Totales(re * PtrReserva);
-void scan_Habitacion_Id(re * PtrReserva);
-void scan_Fecha_Entrada(re * PtrReserva);
-void scan_Fecha_Salida(re * PtrReserva);
+void scan_Habitacion_Fecha(re * PtrReserva);
 
+
+void scan_Habitacion_Id(re * PtrReserva);
+void scan_Fecha_Entrada_Salida(re * PtrReserva);
+
+int ValidarDisponibilidad(re * PtrReserva);
+void printReservasYaHechas(re * PtrReserva);
+void VerHabitaciones(date Entrada, date Salida);
+void VerFechas(hab Habitacion);
 
 
 // FUNCIONES PARA VECTORES DE T_RESERVA
