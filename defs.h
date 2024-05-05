@@ -139,3 +139,5 @@ int Menu_Editar_Reserva();
 int OpcionModificarFecha();
 int OpcionModificarCategoria();
 int OpcionCancelarReserva();
+int ConfirmarCancelacion();
+void CancelarReserva();

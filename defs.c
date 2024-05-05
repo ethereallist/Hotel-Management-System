@@ -84,9 +84,10 @@ int Menu_Editar_Reserva(int Numero_Reserva)
     while (1)
     {
         Limpiar();
+        printf("-----MODIFICANDO LA RESERVA %i----\n", Numero_Reserva + 1);
         printf("1. Modificar fecha de entrada\n");
         printf("2. Modificar categoria de habitación\n");
-        printf("3. Cancelar reserva\n");
+        printf("4. Cancelar reserva\n");
         printf("0. Salir\n");
 
         switch (Opcion() - 48) //-48 por ser ascii
@@ -99,7 +100,7 @@ int Menu_Editar_Reserva(int Numero_Reserva)
             OpcionModificarCategoria(Numero_Reserva);
             break;
 
-        case 3:
+        case 4:
             OpcionCancelarReserva(Numero_Reserva);
             break;
 
@@ -118,8 +119,9 @@ int OpcionModificarFecha(int Numero_Reserva){
 int OpcionModificarCategoria(int Numero_Reserva){
 
 };
-int OpcionCancelarReserva(int Numero_Reserva){
-
+int OpcionCancelarReserva(int Numero_Reserva)
+{
+    ConfirmarCancelacion(Numero_Reserva);
 };
 
 void OpcionBuscarID()
@@ -207,6 +209,62 @@ int Busqueda_ID(int ID_Buscar)
         MenuPrincipal();
         return 0;
     }
+}
+
+//_______________________FUNCIONES PARA CANCELAR RESERVA_____________________
+
+int ConfirmarCancelacion(int Numero_Reserva)
+{
+    printf("¿Está seguro de que quiere cancelar la reservación?");
+    while (1)
+    {
+        Limpiar();
+        printf("-----CANCELAR RESERVA----\n");
+        printf("1. SI\n");
+        printf("0. Salir\n");
+
+        switch (Opcion() - 48) //-48 por ser ascii
+        {
+        case 1:
+            CancelarReserva(Numero_Reserva);
+            break;
+
+        case 0:
+            Limpiar();
+            return 0;
+            break;
+        }
+    }
+}
+
+void CancelarReserva(int Numero_Reserva)
+{
+    for (int i = 0; i < 50; i++)
+    {
+        strcpy(RESERVAS[i].Nombre, "0");
+    }
+    for (int i = 0; i < 50; i++)
+    {
+        strcpy(RESERVAS[Numero_Reserva].Apellido, "0");
+    }
+    RESERVAS[Numero_Reserva].Numero_Id = 0;
+    RESERVAS[Numero_Reserva].Personas_Totales = 0;
+    RESERVAS[Numero_Reserva].Entrada.dd = 0;
+    RESERVAS[Numero_Reserva].Entrada.mm = 0;
+    RESERVAS[Numero_Reserva].Entrada.aa = 0;
+    RESERVAS[Numero_Reserva].Salida.dd = 0;
+    RESERVAS[Numero_Reserva].Salida.mm = 0;
+    RESERVAS[Numero_Reserva].Salida.aa = 0;
+    RESERVAS[Numero_Reserva].Extra.Tiempo_Estadia = 0;
+    RESERVAS[Numero_Reserva].Extra.Precio_Total = 0;
+    RESERVAS[Numero_Reserva].Habitacion.Piso = 0;
+    RESERVAS[Numero_Reserva].Habitacion.Puerta = 0;
+    RESERVAS[Numero_Reserva].Habitacion.Extra.Categoria = 0;
+    RESERVAS[Numero_Reserva].Habitacion.Extra.Bool_Reservado = 0;
+
+    scanReserva(*PtrReserva);
+    WRITE_RESERVAS(); // ESCRIBO (GUARDO) EN EL ARCHIVO
+    Enter();
 }
 
 //________________________FUNCIONES PARA T_RESERVA __________________________
@@ -401,10 +459,8 @@ int BuscarHabitacionFechaCategoria(re *PtrReserva)
                 printf("%i: %i-%i\n", i, ResultadosDeBusqueda[i].Piso, ResultadosDeBusqueda[i].Puerta);
                 if (PtrReserva->Habitacion.Piso == ResultadosDeBusqueda[i].Piso)
                 {
-                    printf("Hola1");
                     if (PtrReserva->Habitacion.Puerta == ResultadosDeBusqueda[i].Puerta)
                     {
-                        printf("Hola2");
                         Coincidencia = 1;
                     }
                 }
