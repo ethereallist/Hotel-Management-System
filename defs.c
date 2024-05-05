@@ -215,7 +215,7 @@ int Busqueda_ID(int ID_Buscar)
 
 int ConfirmarCancelacion(int Numero_Reserva)
 {
-    printf("¿Está seguro de que quiere cancelar la reservación?");
+    printf("¿Está seguro de que quiere cancelar la reservación?\n");
     while (1)
     {
         Limpiar();
@@ -262,7 +262,6 @@ void CancelarReserva(int Numero_Reserva)
     RESERVAS[Numero_Reserva].Habitacion.Extra.Categoria = 0;
     RESERVAS[Numero_Reserva].Habitacion.Extra.Bool_Reservado = 0;
 
-    scanReserva(*PtrReserva);
     WRITE_RESERVAS(); // ESCRIBO (GUARDO) EN EL ARCHIVO
     Enter();
 }
