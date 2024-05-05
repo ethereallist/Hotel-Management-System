@@ -442,9 +442,11 @@ void scan_Personas_Totales(re * PtrReserva)
 
 void scan_Fecha_Categoria(re * PtrReserva)
 {
-
-	scan_Fecha_Entrada_Salida(PtrReserva);
-	scan_Categoria(PtrReserva);
+    do
+    {
+        scan_Fecha_Entrada_Salida(PtrReserva);
+        scan_Categoria(PtrReserva);
+    }
 	while(0 == BuscarHabitacionFechaCategoria(PtrReserva));
 }
 
@@ -455,70 +457,126 @@ int BuscarHabitacionFechaCategoria (re * PtrReserva)
 	date Entrada = PtrReserva->Entrada;
 	date Salida = PtrReserva->Salida;
 	
-	int HabDisponibles = 0;
+	
 	hab * HabitacionesDeLaCategoria = NULL; //Habitaciones de la categoria deseada
 	int Tam_Hab_Cat;
 	
-	
-	hab * ResultadosDeBusqueda = calloc(1, sizeof(hab));
-	int TamResBus = 0;
-	
 	Buscar_Habitacion_Por_Categoria(Categoria, &HabitacionesDeLaCategoria, &Tam_Hab_Cat);
+
+
+    int Invalido = 0;
+
+    // IMPRIMIR reservas disponibles y borrar las no disponibles
+    for (int i = 0; i < Tam_Hab_Cat; i++)
+    {
+        hab Habitacion = HabitacionesDeLaCategoria[i];
+        int DisponibleEsaFecha = ValidarDisponibilidad2(Habitacion, Entrada, Salida);
+        if(DisponibleEsaFecha == 1)
+        {
+            printf("%i-%i  ", Habitacion.Piso, Habitacion.Puerta);
+        }
+        else
+        {
+            HabitacionesDeLaCategoria[i].Piso = 0;
+            HabitacionesDeLaCategoria[i].Puerta = 0;
+            Invalido++;
+            if (Invalido == Tam_Hab_Cat)
+            {
+                printf("SIN RESULTADOS\n");
+                Enter();
+                return 0;
+            }
+            
+        }
+    }
+    
+
+
+
+
+    // SCANEAR
+    int Coincidencia = 0;
+    do
+    {
+        scan_Habitacion(PtrReserva);
+
+        //Habitacion tiene que ser igual a ALGUNA del vector
+        for (int i = 0; i < Tam_Hab_Cat; i++)
+        {
+            if (HabitacionesDeLaCategoria[i].Piso == PtrReserva->Habitacion.Piso && HabitacionesDeLaCategoria[i].Puerta == PtrReserva->Habitacion.Puerta);
+            {
+                Coincidencia = 1; return 1;
+            }
+        }
+    }
+    while(Coincidencia == 0);
+
+
+
+    //1
+// int HabDisponibles = 0;
+
+    // hab * ResultadosDeBusqueda = calloc(1, sizeof(hab));
+	// int TamResBus = 0;	
+	// for (int i = 1; i < Tam_Hab_Cat; i++)
+	// {
+	// 	HabDisponibles += ValidarDisponibilidad2(HabitacionesDeLaCategoria[i], Entrada, Salida);
 		
-	for (int i = 1; i < Tam_Hab_Cat; i++)
-	{
-		HabDisponibles += ValidarDisponibilidad2(HabitacionesDeLaCategoria[i], Entrada, Salida);
+    //     printf("ValidarDisponibilidad en i: %i vale: %i\n", i, ValidarDisponibilidad2(HabitacionesDeLaCategoria[i], Entrada, Salida));
+		
+	// 	if(HabDisponibles == 1)
+	// 	{
+	// 		printf("HABITACIONES ENCONTRADAS:\n");
+	// 		printf("Piso Puerta\n");
+	// 	}
 		
 		
-		if(HabDisponibles == 1)
-		{
-			printf("HABITACIONES ENCONTRADAS:\n");
-			printf("Piso Puerta\n");
-		}
-		
-		
-		if(HabDisponibles != 0)
-		{
-			TamResBus++;
-			ResultadosDeBusqueda = realloc(ResultadosDeBusqueda, TamResBus * sizeof(hab));
-			ResultadosDeBusqueda[TamResBus-1].Piso = HabitacionesDeLaCategoria[i].Piso;
-			ResultadosDeBusqueda[TamResBus-1].Puerta = HabitacionesDeLaCategoria[i].Puerta;
+	// 	if(HabDisponibles != 0)
+	// 	{
+    //         printf("Numero de hab disponibles %i", HabDisponibles);
+	// 		TamResBus++;
+	// 		ResultadosDeBusqueda = realloc(ResultadosDeBusqueda, TamResBus * sizeof(hab));
+	// 		ResultadosDeBusqueda[TamResBus-1].Piso = HabitacionesDeLaCategoria[i].Piso;
+	// 		ResultadosDeBusqueda[TamResBus-1].Puerta = HabitacionesDeLaCategoria[i].Puerta;
 			
-			printf("  %i     %i\n", ResultadosDeBusqueda[TamResBus-1].Piso, ResultadosDeBusqueda[TamResBus-1].Puerta);
-		}
-	}
+	// 		printf("  %i     %i\n", ResultadosDeBusqueda[TamResBus-1].Piso, ResultadosDeBusqueda[TamResBus-1].Puerta);
+	// 	}
+	// }
 	
-	
-	
-	if(HabDisponibles != 0)
-	{
-		int Coincidencia = 0;
-		do
-		{
-			scan_Habitacion(PtrReserva);
+	// if(HabDisponibles != 0)
+	// {
+	// 	int Coincidencia = 0;
+	// 	do
+	// 	{
+	// 		scan_Habitacion(PtrReserva);
 			
-			for (int i = 0; i < TamResBus; i++)
-			{
-				printf("%i: %i-%i\n", i, ResultadosDeBusqueda[i].Piso, ResultadosDeBusqueda[i].Puerta);
-				if(PtrReserva->Habitacion.Piso == ResultadosDeBusqueda[i].Piso)
-				{
-					if(PtrReserva->Habitacion.Puerta == ResultadosDeBusqueda[i].Puerta)
-					{
-						Coincidencia = 1;
-					}
-				}
+	// 		for (int i = 0; i < TamResBus; i++)
+	// 		{
+	// 			printf("%i: %i-%i\n", i, ResultadosDeBusqueda[i].Piso, ResultadosDeBusqueda[i].Puerta);
+	// 			if(PtrReserva->Habitacion.Piso == ResultadosDeBusqueda[i].Piso)
+	// 			{
+	// 				if(PtrReserva->Habitacion.Puerta == ResultadosDeBusqueda[i].Puerta)
+	// 				{
+	// 					Coincidencia = 1;
+	// 				}
+
+
+	// 			}
 				
-			}
-		}
-		while(Coincidencia != 1);
-	}
-	else
-	{
-		printf("No hay habitaciones de su categoria disponible ese rango de fechas");
-		Enter();
-	}
+	// 		}
+	// 	}
+	// 	while(Coincidencia != 1);
+	// }
+	// else
+	// {
+	// 	printf("No hay habitaciones de su categoria disponible ese rango de fechas");
+	// 	Enter();
+	// }
+
+    // // eliminar un valor de la lista
+    // // necesito saber cual seleccione para eliminarlo de la lista
 	
-	return HabDisponibles;
+	// return HabDisponibles;
 }
 
 
@@ -582,9 +640,10 @@ void scan_Categoria(re * PtrReserva)
 
 
 
-void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorHabitaciones, int * Tam)
+void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorResultados, int * Tam)
 {
-	(*Tam) = 1;
+	(*Tam) = 0;
+    (*PtrVectorResultados) = (hab*)calloc(1, sizeof(hab));
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 5; j++)
@@ -592,13 +651,13 @@ void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorHabitaciones
 			if (Hotel[i][j] == Categoria)
 			{
 				(*Tam)++;
-				hab * aux = (hab*)realloc(*PtrVectorHabitaciones, (*Tam) * sizeof(hab));
-				//free((void*)*PtrVectorHabitaciones);
-				(*PtrVectorHabitaciones) = aux;
+				hab * aux = (hab*)realloc(*PtrVectorResultados, (*Tam) * sizeof(hab));
+				//free((void*)*PtrVectorResultados);
+				(*PtrVectorResultados) = aux;
 				
-				(*PtrVectorHabitaciones)[(*Tam)-1].Piso = i+1;
-				(*PtrVectorHabitaciones)[(*Tam)-1].Puerta = j+1;
-				(*PtrVectorHabitaciones)[(*Tam)-1].Extra.Categoria = Categoria;
+				(*PtrVectorResultados)[(*Tam)-1].Piso = i+1;
+				(*PtrVectorResultados)[(*Tam)-1].Puerta = j+1;
+				(*PtrVectorResultados)[(*Tam)-1].Extra.Categoria = Categoria;
 			}
 		}
 	}
@@ -712,7 +771,7 @@ int ValidarDisponibilidad2(hab Habitacion, date Entrada, date Salida)
 	int NoDisponible = 0;
 	for (int i = 0; i < Tam_RESERVAS; i++)
 	{
-		if (Habitacion.Piso == RESERVAS[i].Habitacion.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
+		if(Habitacion.Piso == RESERVAS[i].Habitacion.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
 		{
 			NoDisponible += Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida);
 		}
@@ -729,7 +788,7 @@ int ValidarDisponibilidadYPrint(re * PtrReserva)
 {
 	int Disponible = 1;
 	int NoDisponible = 0;
-	for (int i = 0; i < Tam_RESERVAS - 1; i++)
+	for (int i = 0; i < Tam_RESERVAS; i++)
 	{
 		if ((*PtrReserva).Habitacion.Piso == RESERVAS[i].Habitacion.Piso && (*PtrReserva).Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
 		{
