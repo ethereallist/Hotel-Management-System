@@ -9,7 +9,7 @@ int Hotel[4][5] = {{1, 1, 2, 2, 3},
                    {1, 1, 2, 2, 3},
                    {1, 1, 2, 2, 3}};
 
-int Categorias_Precios[4] = {0, 50, 70, 90}
+int Categorias_Precios[4] = {0, 50, 70, 90};
 
 int Comision_Persona_Extra = 10;
 

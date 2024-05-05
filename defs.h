@@ -35,12 +35,12 @@ typedef struct
 typedef struct 
 {
 	int Tiempo_Estadia;
-	int Precio_Total; = tiempo_Estadia * Categorias_Precios[Categoria] + (Personas_Extra * Comision);
+	int Precio_Total;// = tiempo_Estadia * Categorias_Precios[Categoria] + (Personas_Extra * Comision);
 } reextra;
 
 typedef struct 
 {
-    char Nombre[50];
+	char Nombre[50];
     char Apellido[50];
     int Numero_Id;
     int Personas_Totales;
