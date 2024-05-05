@@ -79,6 +79,10 @@ int MenuPrincipal();
 void OpcionAgregarReserva();
 void OpcionVerReservas();
 void OpcionModificarReserva();
+// Momentaneo
+void OpcionBuscarID();
+int Print_Scan_ID();
+int Busqueda_ID(re * RESERVAS, int ID_Buscar);
 
 
 // FUNCIONES DE FECHA

@@ -378,20 +378,20 @@ int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida
 
 
 
-void Asignar_Categorias(T_Hotel Categorias)
-{
-    // Asigno 2 habitaciones sencillas, 2 dobles y 1 triple por piso del hotel en el main y aqui las visualizo.
-    printf("Categorias de cada habitacion del hotel: \n");
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
+// void Asignar_Categorias(T_Hotel Categorias)
+// {
+//     // Asigno 2 habitaciones sencillas, 2 dobles y 1 triple por piso del hotel en el main y aqui las visualizo.
+//     printf("Categorias de cada habitacion del hotel: \n");
+//     for (int i = 0; i < 4; i++)
+//     {
+//         for (int j = 0; j < 5; j++)
+//         {
             
-            printf("%i", Categorias.Habitaciones[i][j]);
-        }
-        printf("\n");
-    }
-}
+//             printf("%i", Categorias.Habitaciones[i][j]);
+//         }
+//         printf("\n");
+//     }
+// }
 
 
 
