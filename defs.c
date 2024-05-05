@@ -264,7 +264,7 @@ void CancelarReserva(int Numero_Reserva)
 {
 	strcpy(RESERVAS[Numero_Reserva].Nombre, "00000000000000000000000000000000000000000000000000");
 	strcpy(RESERVAS[Numero_Reserva].Apellido, "00000000000000000000000000000000000000000000000000");
-	RESERVAS[Numero_Reserva].N2umero_Id = 0;
+	RESERVAS[Numero_Reserva].Numero_Id = 0;
 	RESERVAS[Numero_Reserva].Personas_Totales = 0;
 	RESERVAS[Numero_Reserva].Entrada.dd = 0;
 	RESERVAS[Numero_Reserva].Entrada.mm = 0;
