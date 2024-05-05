@@ -5,7 +5,5 @@
 *.o
 *.out
 pedro.c
-prueba.c
 copiaporsi.h
-reservas_data
 
