@@ -46,22 +46,9 @@ typedef struct
     int Personas_Totales;
     date Entrada;
     date Salida;
-    hab Habitacion_Id;
+    hab Habitacion;
     reextra Extra;
 } re;
-
-typedef struct
-{
-    int Categoria; // Sencilla, doble o triple
-    int Reservada; // Si o no
-    int N_Dias_Ocupada;
-    char Nombre_Reserva[50];
-    int Id_Reserva;
-    int Numero_Habitacion;
-    int Numero_Piso;
-    int Fecha_Reserva;
-    int Fecha_Libre;
-} T_Habitacion;
 
 
 
@@ -102,14 +89,26 @@ void scan_Num_Id(re * PtrReserva);
 void scan_Personas_Totales(re * PtrReserva);
 void scan_Habitacion_Fecha(re * PtrReserva);
 
-
-void scan_Habitacion_Id(re * PtrReserva);
+void scan_Fecha_Categoria(re * PtrReserva);
+int BuscarHabitacionFechaCategoria (re * PtrReserva);
+void scan_Categoria(re * PtrReserva);
 void scan_Fecha_Entrada_Salida(re * PtrReserva);
 
-int ValidarDisponibilidad(re * PtrReserva);
+void scan_Habitacion(re * PtrReserva);
+
+
+
+
+
+
+int ValidarDisponibilidad(hab Habitacion, date Entrada, date Salida);
+int ValidarDisponibilidadYPrint(re * PtrReserva);
 void printReservasYaHechas(re * PtrReserva);
 void VerHabitaciones(date Entrada, date Salida);
 void VerFechas(hab Habitacion);
+
+void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorHabitaciones, int * Tam);
+
 
 
 // FUNCIONES PARA VECTORES DE T_RESERVA

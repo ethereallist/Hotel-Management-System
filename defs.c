@@ -159,6 +159,701 @@ void OpcionModificarReserva()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//________________________FUNCIONES PARA T_RESERVA __________________________
+
+
+
+
+void printReserva(re Reserva)
+{
+	printf("Los datos que tenemos del cliente %s %s son: \n", Reserva.Nombre, Reserva.Apellido);
+    printf("-------------------------------------------\n");
+    printf("Su nombre es: %s\n", Reserva.Nombre);
+    printf("Su apellido es: %s\n", Reserva.Apellido);
+    printf("Su numero de ID es: %i\n", Reserva.Numero_Id);
+    printf("Personas totales: %i\n", Reserva.Personas_Totales);
+    printf("Habitacion: Piso %i. Puerta %i\n", Reserva.Habitacion.Piso, Reserva.Habitacion.Puerta);
+    printf("Fecha de reserva: %i/%i/%i \n", Reserva.Entrada.dd, Reserva.Entrada.mm, Reserva.Entrada.aa);
+    printf("Fecha de salida: %i/%i/%i \n", Reserva.Salida.dd, Reserva.Salida.mm, Reserva.Salida.aa);
+    printf("-------------------------------------------\n");
+}
+
+void scanReserva(re * PtrReserva)
+{
+    
+    scan_Nombre(PtrReserva);
+	scan_Apellido(PtrReserva);
+    
+    scan_Num_Id(PtrReserva);
+    scan_Personas_Totales(PtrReserva);
+    
+    scan_Fecha_Categoria(PtrReserva);
+	
+	
+	//CALCULO LO DEMÁS
+	
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//_________________________SUB-FUNCIONES DE SCANRESERVA()_________________________
+
+void scan_Nombre(re * PtrReserva)
+{
+	printf("Nombre: ");
+	
+	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
+	do
+	{
+		char ch = 0;
+		int i = 0;
+		do
+		{
+			scanf("%c", &ch);
+			if(ch != '\n')
+			{
+				FueModificado = 1;
+				(*PtrReserva).Nombre[i] = ch;
+				i++;
+			}
+		}
+		while(ch != '\n' && i < 50);
+		
+		//Si sobraron caracteres
+		if(ch != '\n')
+		{
+			do
+			{
+				ch = getchar();
+			}
+			while(ch != '\n');
+		}
+	}
+	while(FueModificado != 1);
+}
+
+
+void scan_Apellido(re * PtrReserva)
+{
+	printf("Apellido: ");
+	
+	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
+	do
+	{
+		char ch = 0;
+		int i = 0;
+		do
+		{
+			scanf("%c", &ch);
+			if(ch != '\n')
+			{
+				FueModificado = 1;
+				(*PtrReserva).Apellido[i] = ch;
+				i++;
+			}
+		}
+		while(ch != '\n' && i < 50);
+		
+		//Si sobraron caracteres
+		if(ch != '\n')
+		{
+			do
+			{
+				ch = getchar();
+			}
+			while(ch != '\n');
+		}
+	}
+	while(FueModificado != 1);
+}
+
+
+void scan_Num_Id(re * PtrReserva)
+{
+	int Valido = 0;
+	char Buffer[10];
+	int Aux;
+	
+	do
+	{
+		printf("Identificación: ");
+		scanf("%s", &Buffer);
+		LimpiarEntrada();
+		Aux = atoi(Buffer);
+		
+		if(Aux > 0) Valido = 1; 
+	}
+	while(Valido != 1);
+	(*PtrReserva).Numero_Id = Aux;
+}
+
+
+void scan_Personas_Totales(re * PtrReserva)
+{
+	int Valido = 0;
+	char Buffer;
+	int Aux;
+	
+	do
+	{
+		printf("Personas totales: ");
+		Buffer = getchar();
+		LimpiarEntrada();
+		Aux = atoi(&Buffer);
+		
+		if(Aux > 0) Valido = 1; 
+	}
+	while(Valido != 1);
+	
+	(*PtrReserva).Personas_Totales = Aux;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ___________________________________________HABITACION Y FECHA____________
+
+
+
+
+void scan_Fecha_Categoria(re * PtrReserva)
+{
+
+	scan_Fecha_Entrada_Salida(PtrReserva);
+	scan_Categoria(PtrReserva);
+	while(0 == BuscarHabitacionFechaCategoria(PtrReserva));
+}
+
+
+int BuscarHabitacionFechaCategoria (re * PtrReserva)
+{
+	int Categoria = PtrReserva->Habitacion.Extra.Categoria;
+	date Entrada = PtrReserva->Entrada;
+	date Salida = PtrReserva->Salida;
+	
+	int HabDisponibles = 0;
+	hab * HabitacionesDeLaCategoria = NULL; //Habitaciones de la categoria deseada
+	int Tam_Hab_Cat;
+	
+	
+	hab * ResultadosDeBusqueda = calloc(1, sizeof(hab));
+	int TamResBus = 0;
+	
+	Buscar_Habitacion_Por_Categoria(Categoria, &HabitacionesDeLaCategoria, &Tam_Hab_Cat);
+		
+	for (int i = 1; i < Tam_Hab_Cat; i++)
+	{
+		HabDisponibles += ValidarDisponibilidad(HabitacionesDeLaCategoria[i], Entrada, Salida);
+		
+		
+		if(HabDisponibles == 1)
+		{
+			printf("HABITACIONES ENCONTRADAS:\n");
+			printf("Piso Puerta\n");
+		}
+		
+		
+		if(HabDisponibles != 0)
+		{
+			TamResBus++;
+			ResultadosDeBusqueda = realloc(ResultadosDeBusqueda, TamResBus * sizeof(hab));
+			ResultadosDeBusqueda[TamResBus-1].Piso = HabitacionesDeLaCategoria[i].Piso;
+			ResultadosDeBusqueda[TamResBus-1].Puerta = HabitacionesDeLaCategoria[i].Puerta;
+			
+			printf("  %i     %i\n", ResultadosDeBusqueda[TamResBus-1].Piso, ResultadosDeBusqueda[TamResBus-1].Puerta);
+		}
+	}
+	
+	
+	
+	if(HabDisponibles != 0)
+	{
+		int Coincidencia = 0;
+		do
+		{
+			scan_Habitacion(PtrReserva);
+			
+			for (int i = 0; i < TamResBus; i++)
+			{
+				printf("%i: %i-%i\n", i, ResultadosDeBusqueda[i].Piso, ResultadosDeBusqueda[i].Puerta);
+				if(PtrReserva->Habitacion.Piso == ResultadosDeBusqueda[i].Piso)
+				{
+					printf("Hola1");
+					if(PtrReserva->Habitacion.Puerta == ResultadosDeBusqueda[i].Puerta)
+					{
+						printf("Hola2");
+						Coincidencia = 1;
+					}
+				}
+				
+			}
+		}
+		while(Coincidencia != 1);
+	}
+	else
+	{
+		printf("No hay habitaciones de su categoria disponible ese rango de fechas");
+		Enter();
+	}
+	
+	return HabDisponibles;
+}
+
+
+
+
+
+
+
+
+void scan_Fecha_Entrada_Salida(re * PtrReserva)
+{
+    do
+    {
+		printf("Introduzca la fecha de entrada (DD/MM/AAAA): ");
+        scanf("%i/%i/%i", &(*PtrReserva).Entrada.dd, &(*PtrReserva).Entrada.mm, &(*PtrReserva).Entrada.aa);
+	}
+	while ( Validar_Fecha((*PtrReserva).Entrada) != 1);
+	
+	int Entrada__Salida = 0;
+	int Error = 0;
+	do
+    {
+		Error = 0;
+		printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
+        scanf("%i/%i/%i", &PtrReserva->Salida.dd, &PtrReserva->Salida.mm, &PtrReserva->Salida.aa);
+        
+        int Entrada__Salida = Comparar_Fechas(PtrReserva->Entrada, PtrReserva->Salida);
+		
+		if (!(Validar_Fecha(PtrReserva->Salida)))
+		{
+			Error = 1;
+			printReserva(*PtrReserva);
+		}
+		
+        if(Entrada__Salida != 1)
+        {
+			Error = 1;
+		}
+    }
+    while (Error == 1);
+}
+
+
+
+void scan_Categoria(re * PtrReserva)
+{
+	char aux[3];
+	int Categoria;
+	do
+	{
+		printf("Seleccione una categoria de Habitacion:\n");
+		printf("(1. Sencilla    2. Doble    3. Triple)\n");
+		scanf("%s", aux);
+		Categoria = atoi(aux);
+		PtrReserva->Habitacion.Extra.Categoria = Categoria;
+		
+		while(getchar() != '\n');
+		
+	}
+	while (Categoria < 1 || Categoria > 3);
+}
+
+
+
+void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorHabitaciones, int * Tam)
+{
+	(*Tam) = 1;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			if (Hotel[i][j] == Categoria)
+			{
+				(*Tam)++;
+				hab * aux = (hab*)realloc(*PtrVectorHabitaciones, (*Tam) * sizeof(hab));
+				free((void*)*PtrVectorHabitaciones);
+				(*PtrVectorHabitaciones) = aux;
+				
+				(*PtrVectorHabitaciones)[(*Tam)-1].Piso = i+1;
+				(*PtrVectorHabitaciones)[(*Tam)-1].Puerta = j+1;
+				(*PtrVectorHabitaciones)[(*Tam)-1].Extra.Categoria = Categoria;
+			}
+		}
+	}
+}
+
+
+
+
+void scan_Habitacion_Fecha(re * PtrReserva)
+{
+	int Disponible = 0;
+    
+    do
+    {
+		scan_Habitacion(PtrReserva);
+		scan_Fecha_Entrada_Salida(PtrReserva);
+		int Disponible = ValidarDisponibilidadYPrint(PtrReserva);
+		
+		
+	}
+	while (Disponible != 1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void scan_Habitacion(re * PtrReserva)
+{
+	int Valido = 0;
+	char Buffer;
+	int Aux;
+	
+	do
+	{
+		printf("Seleccione el piso de su habitacion: ");
+		Buffer = getchar();
+		LimpiarEntrada();
+		Aux = atoi(&Buffer);
+		
+		if(Aux >= 1 && Aux <= 4) Valido = 1; 
+	}
+	while(Valido != 1);
+	
+	(*PtrReserva).Habitacion.Piso= Aux;
+	
+	Valido = 0;
+	Buffer = 0;
+	Aux = 0;
+	do
+	{
+		printf("Seleccione la puerta de su habitacion: ");
+		Buffer = getchar();
+		LimpiarEntrada();
+		Aux = atoi(&Buffer);
+		
+		if(Aux >= 1 && Aux <= 5) Valido = 1; 
+	}
+	while(Valido != 1);
+	
+	(*PtrReserva).Habitacion.Puerta= Aux;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// DISPONIBILIDAD
+int ValidarDisponibilidad(hab Habitacion, date Entrada, date Salida)
+{
+	int Disponible = 1;
+	int NoDisponible = 0;
+	for (int i = 0; i < Tam_RESERVAS - 1; i++)
+	{
+		if (Habitacion.Piso == RESERVAS[i].Habitacion.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
+		{
+			NoDisponible += Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida);
+		}
+	}
+	Disponible = !NoDisponible;
+	return Disponible;
+}
+
+
+int ValidarDisponibilidadYPrint(re * PtrReserva)
+{
+	int Disponible = 1;
+	int NoDisponible = 0;
+	for (int i = 0; i < Tam_RESERVAS - 1; i++)
+	{
+		if ((*PtrReserva).Habitacion.Piso == RESERVAS[i].Habitacion.Piso && (*PtrReserva).Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
+		{
+			NoDisponible += Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida);
+			
+			if(NoDisponible == 1)
+			{
+				printf("Ya hay reservas en ese rango:\n");
+				LimpiarEntrada();
+				Enter();
+			}
+			
+			if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+			{
+				printReserva(RESERVAS[i]);
+			}
+			
+			if (i == Tam_RESERVAS - 2)
+			{
+				LimpiarEntrada();
+				Enter();
+			}
+		}
+	}
+	
+	Disponible = !NoDisponible;
+	return Disponible;
+}
+
+
+//~ void printReservasYaHechas(re * PtrReserva)
+//~ {
+	//~ printf("Reservas ya hechas:\n");
+	//~ (*PtrReserva).Entrada.dd = 0;
+	//~ (*PtrReserva).Entrada.mm = 0;
+	//~ (*PtrReserva).Entrada.aa = 0;
+	//~ (*PtrReserva).Salida.dd = 0;
+	//~ (*PtrReserva).Salida.mm = 0;
+	//~ (*PtrReserva).Salida.aa = 0;
+	
+	//~ int Disponible = 1;
+	//~ int NoDisponible = 0;
+	//~ for (int i = 0; i < Tam_RESERVAS-1; i++)
+	//~ {
+		//~ if ((*PtrReserva).Habitacion.Piso == RESERVAS[i].Habitacion.Piso && (*PtrReserva).Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
+		//~ {
+			//~ if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+			//~ {
+				//~ printReserva(*PtrReserva);
+			//~ }
+		//~ }
+	//~ }
+//~ }
+
+//~ VerHabitacionesPorCategoria(
+
+//Ver habitaciones ocupadas en un rango de fechas
+void VerHabitacionesPorId(date Entrada, date Salida)
+{
+	printf("Reservas hechas para %i/%i/%i a %i/%i/%i", Entrada.dd, Entrada.mm, Entrada.aa, Salida.dd, Salida.mm, Salida.aa);
+	for (int i = 0; i < Tam_RESERVAS; i++)
+	{
+		if (!Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+		{
+			printReserva(RESERVAS[i]);
+		}
+	}
+}
+
+void VerFechas(hab Habitacion)
+{
+	for (int i = 0; i < Tam_RESERVAS; i++)
+	{
+		if (Habitacion.Piso == RESERVAS[i].Habitacion.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
+		{
+			printReserva(RESERVAS[i]);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //_____________________FUNCIONES DE FECHA______________
 
 int Validar_Fecha(date F)
@@ -378,20 +1073,6 @@ int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida
 
 
 
-void Asignar_Categorias(T_Hotel Categorias)
-{
-    // Asigno 2 habitaciones sencillas, 2 dobles y 1 triple por piso del hotel en el main y aqui las visualizo.
-    printf("Categorias de cada habitacion del hotel: \n");
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            
-            printf("%i", Categorias.Habitaciones[i][j]);
-        }
-        printf("\n");
-    }
-}
 
 
 
@@ -430,330 +1111,49 @@ void Asignar_Categorias(T_Hotel Categorias)
 
 
 
-//________________________FUNCIONES PARA T_RESERVA __________________________
 
 
 
 
-void printReserva(re Reserva)
-{
-	printf("Los datos que tenemos del cliente %s %s son: \n", Reserva.Nombre, Reserva.Apellido);
-    printf("-------------------------------------------\n");
-    printf("Su nombre es: %s\n", Reserva.Nombre);
-    printf("Su apellido es: %s\n", Reserva.Apellido);
-    printf("Su numero de ID es: %i\n", Reserva.Numero_Id);
-    printf("Personas totales: %i\n", Reserva.Personas_Totales);
-    printf("Habitacion: Piso %i. Puerta %i\n", Reserva.Habitacion_Id.Piso, Reserva.Habitacion_Id.Puerta);
-    printf("Fecha de reserva: %i/%i/%i \n", Reserva.Entrada.dd, Reserva.Entrada.mm, Reserva.Entrada.aa);
-    printf("Fecha de salida: %i/%i/%i \n", Reserva.Salida.dd, Reserva.Salida.mm, Reserva.Salida.aa);
-    printf("-------------------------------------------\n");
-}
 
-void scanReserva(re * PtrReserva)
-{
-    
-    scan_Nombre(PtrReserva);
-	scan_Apellido(PtrReserva);
-    
-    scan_Num_Id(PtrReserva);
-    scan_Personas_Totales(PtrReserva);
-    
-    scan_Habitacion_Fecha(PtrReserva);
-	
-}
 
-//_________________________SUB-FUNCIONES DE SCANRESERVA()_________________________
 
-void scan_Nombre(re * PtrReserva)
-{
-	printf("Nombre: ");
-	
-	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
-	do
-	{
-		char ch = 0;
-		int i = 0;
-		do
-		{
-			scanf("%c", &ch);
-			if(ch != '\n')
-			{
-				FueModificado = 1;
-				(*PtrReserva).Nombre[i] = ch;
-				i++;
-			}
-		}
-		while(ch != '\n' && i < 50);
-		
-		//Si sobraron caracteres
-		if(ch != '\n')
-		{
-			do
-			{
-				ch = getchar();
-			}
-			while(ch != '\n');
-		}
-	}
-	while(FueModificado != 1);
-}
-
-
-void scan_Apellido(re * PtrReserva)
-{
-	printf("Apellido: ");
-	
-	int FueModificado = 0; //Hasta que no se modifique, no sale del ciclo
-	do
-	{
-		char ch = 0;
-		int i = 0;
-		do
-		{
-			scanf("%c", &ch);
-			if(ch != '\n')
-			{
-				FueModificado = 1;
-				(*PtrReserva).Apellido[i] = ch;
-				i++;
-			}
-		}
-		while(ch != '\n' && i < 50);
-		
-		//Si sobraron caracteres
-		if(ch != '\n')
-		{
-			do
-			{
-				ch = getchar();
-			}
-			while(ch != '\n');
-		}
-	}
-	while(FueModificado != 1);
-}
-
-
-void scan_Num_Id(re * PtrReserva)
-{
-	int Valido = 0;
-	char Buffer[10];
-	int Aux;
-	
-	do
-	{
-		printf("Identificación: ");
-		scanf("%s", &Buffer);
-		LimpiarEntrada();
-		Aux = atoi(Buffer);
-		
-		if(Aux > 0) Valido = 1; 
-	}
-	while(Valido != 1);
-	(*PtrReserva).Numero_Id = Aux;
-}
-
-
-void scan_Personas_Totales(re * PtrReserva)
-{
-	int Valido = 0;
-	char Buffer;
-	int Aux;
-	
-	do
-	{
-		printf("Personas totales: ");
-		Buffer = getchar();
-		LimpiarEntrada();
-		Aux = atoi(&Buffer);
-		
-		if(Aux > 0) Valido = 1; 
-	}
-	while(Valido != 1);
-	
-	(*PtrReserva).Personas_Totales = Aux;
-}
-
-
-
-
-
-
-// ___________________________________________HABITACION Y FECHA____________
-
-void scan_Habitacion_Fecha(re * PtrReserva)
-{
-	int Disponible = 0;
-    
-    do
-    {
-		scan_Habitacion_Id(PtrReserva);
-		scan_Fecha_Entrada_Salida(PtrReserva);
-		int Disponible = ValidarDisponibilidad(PtrReserva);
-		
-		
-	}
-	while (Disponible != 1);
-}
-
-
-
-
-
-
-
-
-void scan_Habitacion_Id(re * PtrReserva)
-{
-	int Valido = 0;
-	char Buffer;
-	int Aux;
-	
-	do
-	{
-		printf("Seleccione el piso de su habitacion: ");
-		Buffer = getchar();
-		LimpiarEntrada();
-		Aux = atoi(&Buffer);
-		
-		if(Aux >= 1 && Aux <= 4) Valido = 1; 
-	}
-	while(Valido != 1);
-	
-	(*PtrReserva).Habitacion_Id.Piso= Aux;
-	
-	Valido = 0;
-	Buffer = 0;
-	Aux = 0;
-	do
-	{
-		printf("Seleccione la puerta de su habitacion: ");
-		Buffer = getchar();
-		LimpiarEntrada();
-		Aux = atoi(&Buffer);
-		
-		if(Aux >= 1 && Aux <= 5) Valido = 1; 
-	}
-	while(Valido != 1);
-	
-	(*PtrReserva).Habitacion_Id.Puerta= Aux;
-}
-
-void scan_Fecha_Entrada_Salida(re * PtrReserva)
-{
-    do
-    {
-		printf("Introduzca la fecha de entrada (DD/MM/AAAA): ");
-        scanf("%i/%i/%i", &(*PtrReserva).Entrada.dd, &(*PtrReserva).Entrada.mm, &(*PtrReserva).Entrada.aa);
-	} while ( Validar_Fecha((*PtrReserva).Entrada) != 1);
-	
-	int Entrada__Salida = 0;
-	do
-    {
-		printf("Introduzca la fecha de salida (DD/MM/AAAA): ");
-        scanf("%i/%i/%i", &(*PtrReserva).Salida.dd, &(*PtrReserva).Salida.mm, &(*PtrReserva).Salida.aa);
-        
-        int Entrada__Salida = Comparar_Fechas((*PtrReserva).Entrada, (*PtrReserva).Salida);
-		
-        //~ if(Entrada__Salida != 1)
-        //~ {
-			//~ printf("(Introduza una fecha de salida posterior a la de entrada)\n");
-		//~ }
-    }
-    while (!(Validar_Fecha((*PtrReserva).Salida) == 1 && Entrada__Salida != 1));
-}
-
-
-
-
-
-
-// DISPONIBILIDAD
-
-int ValidarDisponibilidad(re * PtrReserva)
-{
-	int Disponible = 1;
-	int NoDisponible = 0;
-	for (int i = 0; i < Tam_RESERVAS - 1; i++)
-	{
-		if ((*PtrReserva).Habitacion_Id.Piso == RESERVAS[i].Habitacion_Id.Piso && (*PtrReserva).Habitacion_Id.Puerta == RESERVAS[i].Habitacion_Id.Puerta)
-		{
-			NoDisponible += Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida);
-			
-			if(NoDisponible == 1)
-			{
-				printf("Ya hay reservas en ese rango:\n");
-				LimpiarEntrada();
-				Enter();
-			}
-			
-			if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
-			{
-				printReserva(RESERVAS[i]);
-			}
-			
-			if (i == Tam_RESERVAS - 2)
-			{
-				LimpiarEntrada();
-				Enter();
-			}
-		}
-	}
-	
-	Disponible = !NoDisponible;
-	return Disponible;
-}
-
-
-//~ void printReservasYaHechas(re * PtrReserva)
-//~ {
-	//~ printf("Reservas ya hechas:\n");
-	//~ (*PtrReserva).Entrada.dd = 0;
-	//~ (*PtrReserva).Entrada.mm = 0;
-	//~ (*PtrReserva).Entrada.aa = 0;
-	//~ (*PtrReserva).Salida.dd = 0;
-	//~ (*PtrReserva).Salida.mm = 0;
-	//~ (*PtrReserva).Salida.aa = 0;
-	
-	//~ int Disponible = 1;
-	//~ int NoDisponible = 0;
-	//~ for (int i = 0; i < Tam_RESERVAS-1; i++)
-	//~ {
-		//~ if ((*PtrReserva).Habitacion_Id.Piso == RESERVAS[i].Habitacion_Id.Piso && (*PtrReserva).Habitacion_Id.Puerta == RESERVAS[i].Habitacion_Id.Puerta)
-		//~ {
-			//~ if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
-			//~ {
-				//~ printReserva(*PtrReserva);
-			//~ }
-		//~ }
-	//~ }
-//~ }
-
-//~ VerHabitacionesPorCategoria(
-
-//Ver habitaciones ocupadas en un rango de fechas
-void VerHabitacionesPorId(date Entrada, date Salida)
-{
-	printf("Reservas hechas para %i/%i/%i a %i/%i/%i", Entrada.dd, Entrada.mm, Entrada.aa, Salida.dd, Salida.mm, Salida.aa);
-	for (int i = 0; i < Tam_RESERVAS; i++)
-	{
-		if (!Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
-		{
-			printReserva(RESERVAS[i]);
-		}
-	}
-}
-
-void VerFechas(hab Habitacion)
-{
-	for (int i = 0; i < Tam_RESERVAS; i++)
-	{
-		if (Habitacion.Piso == RESERVAS[i].Habitacion_Id.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion_Id.Puerta)
-		{
-			printReserva(RESERVAS[i]);
-		}
-	}
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -793,6 +1193,24 @@ int Agrandar_RESERVAS()
 	if(RESERVAS == NULL) return 1;
 	else return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
