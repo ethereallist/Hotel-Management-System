@@ -1,7 +1,9 @@
-#include "Aquiedwer.h"
+#include "defs.h"
+
 
 int main()
 {      
-	Iniciar();
+    Iniciar();
     return 0;
 }
+
