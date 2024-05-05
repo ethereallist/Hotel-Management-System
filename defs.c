@@ -502,10 +502,8 @@ int BuscarHabitacionFechaCategoria (re * PtrReserva)
 				printf("%i: %i-%i\n", i, ResultadosDeBusqueda[i].Piso, ResultadosDeBusqueda[i].Puerta);
 				if(PtrReserva->Habitacion.Piso == ResultadosDeBusqueda[i].Piso)
 				{
-					printf("Hola1");
 					if(PtrReserva->Habitacion.Puerta == ResultadosDeBusqueda[i].Puerta)
 					{
-						printf("Hola2");
 						Coincidencia = 1;
 					}
 				}
@@ -595,7 +593,7 @@ void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorHabitaciones
 			{
 				(*Tam)++;
 				hab * aux = (hab*)realloc(*PtrVectorHabitaciones, (*Tam) * sizeof(hab));
-				free((void*)*PtrVectorHabitaciones);
+				//free((void*)*PtrVectorHabitaciones);
 				(*PtrVectorHabitaciones) = aux;
 				
 				(*PtrVectorHabitaciones)[(*Tam)-1].Piso = i+1;
@@ -815,9 +813,9 @@ void BuscarHabitaciones(date Entrada, date Salida)
 			
 			if(HabDisponibles == 1 && PrimeraVez == 1)
 			{
-				printf("______________________________________\n");
+				printf("--------------------------------------\n");
 				printf("HABITACIONES DISPONIBLES EN ESE RANGO:\n");
-				printf("______________________________________\n");
+				printf("--------------------------------------\n");
 				PrimeraVez = 0;
 			}
 			
@@ -831,9 +829,9 @@ void BuscarHabitaciones(date Entrada, date Salida)
 	
 	if(HabDisponibles == 0)
 	{
-		printf("_______________________________________________\n");
+		printf("-----------------------------------------------\n");
 		printf("NO SE ENCONTRARON HABITACIONES PARA ESAS FECHAS\n");
-		printf("_______________________________________________\n");
+		printf("-----------------------------------------------\n");
 	}
 	
 	Enter();
