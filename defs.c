@@ -28,6 +28,18 @@ const char NombreArchivoRESERVAS[] = "reservas_data"; //Modificable
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 //________________________MENUS INICIALES_____________________
 int Iniciar()
 {
@@ -52,7 +64,7 @@ int MenuPrincipal()
 		Limpiar();
 		printf("1. Agregar reserva\n");
 		printf("2. Ver todas las reservas actuales\n");
-		printf("3. Modificar reserva\n");
+		printf("3. Consultar disponibilidad\n");
 		printf("0. Salir\n");
 		
 		switch(Opcion()-48) //-48 por ser ascii
@@ -65,8 +77,12 @@ int MenuPrincipal()
 				OpcionVerReservas();
 				break;
 				
+			//~ case 3:
+				//~ OpcionModificarReserva();
+				//~ break;
+			
 			case 3:
-				OpcionModificarReserva();
+				OpcionConsultaDisponibilidad();
 				break;
 			
 			case 0:
@@ -93,11 +109,11 @@ void OpcionAgregarReserva()
 void OpcionVerReservas()
 {
 	Limpiar();
+	
 	for(int i = 0; i < Tam_RESERVAS; i++)
 	{
-		printf("\n-------------------------------------------\n");
 		printf("CLIENTE #%i\n", i+1);
-		printReserva(RESERVAS[i]);
+		printReserva(&RESERVAS[i]);
 	}
 	Enter();
 	Enter();
@@ -110,7 +126,6 @@ void OpcionModificarReserva()
 	Limpiar();
 	printf("Qué reserva desea modificar?: ");
 	
-	
 	int i;
 	do
 	{
@@ -120,11 +135,34 @@ void OpcionModificarReserva()
 	
 	i--; //Uno menos porque vamos a trabajar con vectores
 	
-	printReserva(RESERVAS[i]);
+	printReserva(&RESERVAS[i]);
 	scanReserva(&RESERVAS[i]);
 	WRITE_RESERVAS(); //ESCRIBO (GUARDO) EN EL ARCHIVO
 	Enter();
 }
+
+
+void OpcionConsultaDisponibilidad()
+{
+	date I = {10,10,1900};
+	date F = {10,10,2100};
+	
+	BuscarHabitaciones(I, F);
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -180,22 +218,23 @@ void OpcionModificarReserva()
 
 
 //________________________FUNCIONES PARA T_RESERVA __________________________
-
-
-
-
-void printReserva(re Reserva)
+void printReserva(re* PtrReserva)
 {
-	printf("Los datos que tenemos del cliente %s %s son: \n", Reserva.Nombre, Reserva.Apellido);
-    printf("-------------------------------------------\n");
-    printf("Su nombre es: %s\n", Reserva.Nombre);
-    printf("Su apellido es: %s\n", Reserva.Apellido);
-    printf("Su numero de ID es: %i\n", Reserva.Numero_Id);
-    printf("Personas totales: %i\n", Reserva.Personas_Totales);
-    printf("Habitacion: Piso %i. Puerta %i\n", Reserva.Habitacion.Piso, Reserva.Habitacion.Puerta);
-    printf("Fecha de reserva: %i/%i/%i \n", Reserva.Entrada.dd, Reserva.Entrada.mm, Reserva.Entrada.aa);
-    printf("Fecha de salida: %i/%i/%i \n", Reserva.Salida.dd, Reserva.Salida.mm, Reserva.Salida.aa);
-    printf("-------------------------------------------\n");
+	CalcularExtra(PtrReserva);
+	printf("\n-------------------------------------------\n");
+	printf("CLIENTE: %s %s\n", PtrReserva->Nombre, PtrReserva->Apellido);
+   	printf("-------------------------------------------\n");
+    printf("Nombre: %s\n", PtrReserva->Nombre);
+    printf("Apellido: %s\n", PtrReserva->Apellido);
+    printf("Numero de identificacion: %i\n", PtrReserva->Numero_Id);
+    printf("Personas totales: %i\n", PtrReserva->Personas_Totales);
+    printf("Habitacion: Piso %i. Puerta %i (CATEGORIA: %i)\n", PtrReserva->Habitacion.Piso, PtrReserva->Habitacion.Puerta, PtrReserva->Habitacion.Extra.Categoria);
+    printf("Fecha de reserva: %i/%i/%i \n", PtrReserva->Entrada.dd, PtrReserva->Entrada.mm, PtrReserva->Entrada.aa);
+    printf("Fecha de salida: %i/%i/%i \n", PtrReserva->Salida.dd, PtrReserva->Salida.mm, PtrReserva->Salida.aa);
+    
+    printf("(Tiempo de estadía: %i noches)\n", PtrReserva->Extra.Tiempo_Estadia);
+    printf("\nPRECIO TOTAL: $%i\n", PtrReserva->Extra.Precio_Total);
+	printf("-------------------------------------------\n");
 }
 
 void scanReserva(re * PtrReserva)
@@ -211,13 +250,22 @@ void scanReserva(re * PtrReserva)
 	
 	
 	//CALCULO LO DEMÁS
-	
-	
-	
+	//LO EXTRA
+	CalcularExtra(PtrReserva);
 }
 
 
-
+void CalcularExtra(re* PtrReserva)
+{
+	PtrReserva->Extra.Tiempo_Estadia = Restar_Fechas(PtrReserva->Entrada, PtrReserva->Salida);
+	printf("[%i]", Restar_Fechas(PtrReserva->Entrada, PtrReserva->Salida));
+	PtrReserva->Habitacion.Extra.Categoria = Hotel[PtrReserva->Habitacion.Piso][PtrReserva->Habitacion.Puerta];
+	printf("[%i]", PtrReserva->Habitacion.Extra.Categoria);
+	int PrecioCategoria = Categorias_Precios[PtrReserva->Habitacion.Extra.Categoria];
+	printf("[%i]", PrecioCategoria);
+	PtrReserva->Extra.Precio_Total = PtrReserva->Extra.Tiempo_Estadia * PrecioCategoria;
+	printf("[%i]", PtrReserva->Extra.Precio_Total);
+}
 
 
 
@@ -419,7 +467,7 @@ int BuscarHabitacionFechaCategoria (re * PtrReserva)
 		
 	for (int i = 1; i < Tam_Hab_Cat; i++)
 	{
-		HabDisponibles += ValidarDisponibilidad(HabitacionesDeLaCategoria[i], Entrada, Salida);
+		HabDisponibles += ValidarDisponibilidad2(HabitacionesDeLaCategoria[i], Entrada, Salida);
 		
 		
 		if(HabDisponibles == 1)
@@ -504,7 +552,6 @@ void scan_Fecha_Entrada_Salida(re * PtrReserva)
 		if (!(Validar_Fecha(PtrReserva->Salida)))
 		{
 			Error = 1;
-			printReserva(*PtrReserva);
 		}
 		
         if(Entrada__Salida != 1)
@@ -661,22 +708,25 @@ void scan_Habitacion(re * PtrReserva)
 
 
 // DISPONIBILIDAD
-int ValidarDisponibilidad(hab Habitacion, date Entrada, date Salida)
+int ValidarDisponibilidad2(hab Habitacion, date Entrada, date Salida)
 {
 	int Disponible = 1;
 	int NoDisponible = 0;
-	for (int i = 0; i < Tam_RESERVAS - 1; i++)
+	for (int i = 0; i < Tam_RESERVAS; i++)
 	{
 		if (Habitacion.Piso == RESERVAS[i].Habitacion.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
 		{
 			NoDisponible += Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida);
 		}
 	}
+	
 	Disponible = !NoDisponible;
 	return Disponible;
 }
 
 
+
+//AQUI IMPRIME________________________________________________________________________________________________________________________________
 int ValidarDisponibilidadYPrint(re * PtrReserva)
 {
 	int Disponible = 1;
@@ -696,7 +746,7 @@ int ValidarDisponibilidadYPrint(re * PtrReserva)
 			
 			if(Las_Fechas_Coinciden((*PtrReserva).Entrada, (*PtrReserva).Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
 			{
-				printReserva(RESERVAS[i]);
+				printReserva(&RESERVAS[i]);
 			}
 			
 			if (i == Tam_RESERVAS - 2)
@@ -736,28 +786,67 @@ int ValidarDisponibilidadYPrint(re * PtrReserva)
 	//~ }
 //~ }
 
-//~ VerHabitacionesPorCategoria(
+//~ BuscarHabitacionesPorCategoria(
 
 //Ver habitaciones ocupadas en un rango de fechas
-void VerHabitacionesPorId(date Entrada, date Salida)
+void VerReservasRango(date Entrada, date Salida)
 {
 	printf("Reservas hechas para %i/%i/%i a %i/%i/%i", Entrada.dd, Entrada.mm, Entrada.aa, Salida.dd, Salida.mm, Salida.aa);
 	for (int i = 0; i < Tam_RESERVAS; i++)
 	{
-		if (!Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
+		if (Las_Fechas_Coinciden(Entrada, Salida, RESERVAS[i].Entrada, RESERVAS[i].Salida))
 		{
-			printReserva(RESERVAS[i]);
+			printReserva(&RESERVAS[i]);
 		}
 	}
 }
 
-void VerFechas(hab Habitacion)
+void BuscarHabitaciones(date Entrada, date Salida)
+{
+	printf("\n%i/%i/%i y %i/%i/%i\n", Entrada.dd, Entrada.mm, Entrada.aa, Salida.dd, Salida.mm, Salida.aa);
+	int HabDisponibles = 0;
+	int PrimeraVez = 1;
+	for (int i = 1; i <= 4; i++)
+	{
+		for (int j = 1; j <= 5; j++)
+		{
+			hab Iterante = {i, j};
+			HabDisponibles += ValidarDisponibilidad2(Iterante, Entrada, Salida);
+			
+			if(HabDisponibles == 1 && PrimeraVez == 1)
+			{
+				printf("______________________________________\n");
+				printf("HABITACIONES DISPONIBLES EN ESE RANGO:\n");
+				printf("______________________________________\n");
+				PrimeraVez = 0;
+			}
+			
+			if(ValidarDisponibilidad2(Iterante, Entrada, Salida))
+			{
+				printf("%i-%i   ", Iterante.Piso , Iterante.Puerta);
+			}
+		}
+		
+	}
+	
+	if(HabDisponibles == 0)
+	{
+		printf("_______________________________________________\n");
+		printf("NO SE ENCONTRARON HABITACIONES PARA ESAS FECHAS\n");
+		printf("_______________________________________________\n");
+	}
+	
+	Enter();
+	Enter();
+}
+
+void BuscarFechas(hab Habitacion)
 {
 	for (int i = 0; i < Tam_RESERVAS; i++)
 	{
 		if (Habitacion.Piso == RESERVAS[i].Habitacion.Piso && Habitacion.Puerta == RESERVAS[i].Habitacion.Puerta)
 		{
-			printReserva(RESERVAS[i]);
+			printReserva(&RESERVAS[i]);
 		}
 	}
 }
@@ -985,17 +1074,23 @@ int Restar_Fechas(date I, date F) //F - I
 	
 	if (Relacion == 1)
 	{
-		//Los años
-		int AniosDePorMedio = F.aa - I.aa - 1;
-		int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + Contar_Bisiestos(I.aa + 1, F.aa - 1);
-		
-		//Los cachitos
-		int CachitoF = Dia_Anio(F);
-		
-		int CachitoI = 365 + Es_Bisiesto(I.aa) - Dia_Anio(I);
-		
-		DiferenciaEnDias = CachitoI + DiasDeAniosDePorMedio + CachitoF - 1; //Para no contar el propio dia
-		
+		if(I.aa == F.aa)
+		{
+			DiferenciaEnDias = Dia_Anio(F) - Dia_Anio(I);
+		}
+		else
+		{
+			//Los años
+			int AniosDePorMedio = F.aa - I.aa - 1;
+			int DiasDeAniosDePorMedio = 365*AniosDePorMedio   + Contar_Bisiestos(I.aa + 1, F.aa - 1);
+			
+			//Los cachitos
+			int CachitoF = Dia_Anio(F);
+			
+			int CachitoI = 365 + Es_Bisiesto(I.aa) - Dia_Anio(I);
+			
+			DiferenciaEnDias = CachitoI + DiasDeAniosDePorMedio + CachitoF - 1; //Para no contar el propio dia
+		}
 	}
 	else if (Relacion == 0)
 	{

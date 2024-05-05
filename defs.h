@@ -35,7 +35,7 @@ typedef struct
 typedef struct 
 {
 	int Tiempo_Estadia;
-	int Precio_Total;// = tiempo_Estadia * Categorias_Precios[Categoria] + (Personas_Extra * Comision);
+	int Precio_Total; // = tiempo_Estadia * Categorias_Precios[Categoria] + (Personas_Extra * Comision);
 } reextra;
 
 typedef struct 
@@ -66,7 +66,7 @@ int MenuPrincipal();
 void OpcionAgregarReserva();
 void OpcionVerReservas();
 void OpcionModificarReserva();
-
+void OpcionConsultaDisponibilidad();
 
 // FUNCIONES DE FECHA
 int Validar_Fecha(date F);
@@ -79,10 +79,12 @@ int Fecha_En_El_Rango_Abierto(date I, date F, date X);
 int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida2);
 
 // FUNCIONES PARA T_RESERVA
-void printReserva(re Reserva);
+void printReserva(re* PtrReserva);
 void scanReserva(re * PtrReserva);
 
 // SUB-FUNCIONES DE SCANRESERVA()
+void CalcularExtra(re* PtrReserva);
+
 void scan_Nombre(re * PtrReserva);
 void scan_Apellido(re * PtrReserva);
 void scan_Num_Id(re * PtrReserva);
@@ -99,13 +101,13 @@ void scan_Habitacion(re * PtrReserva);
 
 
 
+// Validar Disp
 
-
-int ValidarDisponibilidad(hab Habitacion, date Entrada, date Salida);
+int ValidarDisponibilidad2(hab Habitacion, date Entrada, date Salida);
 int ValidarDisponibilidadYPrint(re * PtrReserva);
 void printReservasYaHechas(re * PtrReserva);
-void VerHabitaciones(date Entrada, date Salida);
-void VerFechas(hab Habitacion);
+void BuscarHabitaciones(date Entrada, date Salida);
+void BuscarFechas(hab Habitacion);
 
 void Buscar_Habitacion_Por_Categoria(int Categoria, hab ** PtrVectorHabitaciones, int * Tam);
 
