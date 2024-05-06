@@ -1,43 +1,43 @@
 # Hotel "El Descanso del Páramo"
 
-Este proyecto es un programa en lenguaje C diseñado para gestionar las reservas y la disponibilidad de habitaciones en el hotel "El Descanso del Páramo". Proporciona diversas funcionalidades útiles para la gestión hotelera.
+This project is a C language program designed to manage reservations and room availability at the "El Descanso del Páramo" hotel. It provides various functionalities for hotel management.
 
-## Funcionalidades
+## Features
 
-- **Registro de Huéspedes:**
-  - Permite ingresar información del huésped como nombre, identificación, número de personas y fecha de entrada.
-  - Valida la disponibilidad de habitaciones según la categoría seleccionada.
-  - Calcula el precio total de la estadía.
-  - Asigna una habitación al huésped y guarda la información.
+- **Guest Registration:**
+  - Allows entry of guest information such as name, ID, number of persons, and check-in date.
+  - Validates room availability based on the selected category.
+  - Calculates the total price of the stay.
+  - Assigns a room to the guest and stores the information.
 
-- **Modificación de Reservas:**
-  - Permite buscar reservas por número de identificación.
-  - Muestra y permite modificar la información de la reserva.
-  - Permite cambiar la fecha de entrada, la categoría de habitación o cancelar la reserva.
+- **Reservation Modification:**
+  - Enables searching for reservations by ID.
+  - Displays and allows modification of reservation information.
+  - Allows changing the check-in date, room category, or canceling the reservation.
 
-- **Consulta de Disponibilidad:**
-  - Permite verificar la disponibilidad de habitaciones por fecha y categoría.
-  - Muestra un listado de habitaciones disponibles con sus características.
+- **Availability Query:**
+  - Allows users to check room availability by date and category.
+  - Displays a list of available rooms with their characteristics.
 
-- **Reportes:**
-  - Genera un reporte con todas las reservas activas, incluyendo detalles como nombre del huésped, habitación, fecha de entrada y salida, y precio.
+- **Reports:**
+  - Generates a report of all active reservations, including guest name, room details, check-in and check-out dates, and price.
 
-## Uso del Programa
+## Using the Program
 
-Para utilizar este programa:
+To use this program:
 
-1. Clona este repositorio en tu máquina local.
-2. Compila el programa utilizando un compilador de C compatible.
-3. Ejecuta el programa y sigue las instrucciones en pantalla para utilizar las diferentes funcionalidades.
+1. Clone this repository to your local machine.
+2. Compile the program using a compatible C compiler.
+3. Run the program and follow the on-screen instructions to use the various functionalities.
 
-## Contribuciones
+## Contributions
 
-¡Contribuciones y mejoras son bienvenidas! Si tienes sugerencias para mejorar este proyecto, no dudes en abrir un *issue* o enviar un *pull request*.
+Contributions and enhancements are welcome! If you have suggestions to improve this project, feel free to open an issue or submit a pull request.
 
-## Licencia
+## License
 
-Este proyecto no tiene licencias.
+This project has no licence.
 
-## Colaboradores
+## Contributors
 
 Edwer Sorey y Rosa Rosales
