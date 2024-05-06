@@ -40,4 +40,4 @@ This project has no licence.
 
 ## Contributors
 
-Edwer Sorey y Rosa Rosales
+Edwer Sorey and Rosa Rosales
