@@ -1,4 +1,4 @@
-# Hotel "El Descanso del Páramo"
+# Hotel Management System in C
 
 This project is a C language program designed to manage reservations and room availability at the "El Descanso del Páramo" hotel. It provides various functionalities for hotel management.
 
