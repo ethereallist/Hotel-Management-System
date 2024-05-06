@@ -1,0 +1,9 @@
+#Esto es para ignorar ciertos tipos de archivos que no nos sirven a la hora de hacer commit
+
+#Extensiones para ignorar:
+*.exe
+*.o
+*.out
+pedro.c
+copiaporsi.h
+

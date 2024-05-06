@@ -1,98 +1,152 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Este archivo debe contener las declaraciones de variables y funciones
 
-// ---------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------DECLARACION DE LAS VARIABLES--------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------------------
 
-// Declaracion de variables y funciones:
 
-struct Hotel
+typedef struct
 {
-    int Habitaciones[4][5];
-};
+	int dd;
+	int mm;
+	int aa;
+} date;
 
-struct Reserva
+
+typedef struct
 {
-    char Nombre[50];
+	int Categoria;
+	int Bool_Reservado;
+} habextra;
+
+typedef struct
+{
+	int Piso;
+	int Puerta;
+	habextra Extra;
+} hab;
+
+
+
+typedef struct 
+{
+	int Tiempo_Estadia;
+	int Precio_Total; // = tiempo_Estadia * Categorias_Precios[Categoria] + (Personas_Extra * Comision);
+} reextra;
+
+typedef struct 
+{
+	char Nombre[50];
     char Apellido[50];
     int Numero_Id;
     int Personas_Totales;
-    int dd_Entrada, mm_Entrada, aa_Entrada;
-    int dd_Salida, mm_Salida, aa_Salida;
-    int Categoria;
-    int Num_Habitacion;
-    float Precio_Total;
-};
+    date Entrada;
+    date Salida;
+    hab Habitacion;
+    reextra Extra;
+} re;
 
-struct Habitacion
-{
-    int Categoria; // Sencilla, doble o triple
-    int Reservada; // Si o no
-    int N_Dias_Ocupada;
-    char Nombre_Cliente[50];
-    int Id_Cliente;
-    int Numero_Habitacion;
-    int Numero_Piso;
-    int Fecha_Reserva;
-    int Fecha_Libre;
-};
 
-void Validar_Fecha(int dd, int mm, int aa, int *validar)
-{
-    // Excluir fechas invalidas
 
-    // BUGS: al introducir un caracter se rompe. Al introducir mes 04,06,09 con el 0 no entra en la condicion.
+// -----------------------------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------DECLARACION DE LAS FUNCIONES--------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------------------------
 
-    if (dd > 31 || dd < 1)
-    {
-        printf("Introduce un dia valido para reservar: \n");
-    }
 
-    // Excluir los dias 31 de los meses abril, junio, septiembre y noviembre.
+// MENUS INICIALES
+int Iniciar();
+int Bienvenida();
+int MenuPrincipal();
 
-    else if (mm == 4 || mm == 6 || mm == 9 || mm == 11)
-    {
-        if (dd > 30)
-        {
-            printf("Este mes solo tiene 30 dias, escoja otro dia: ");
-        }
-        else if (aa < 2024)
-        {
-            printf("Introduce un año valido para reservar: \n");
-        }
-        else
-        {
-            *validar = 1;
-        }
-    }
-    else if (mm > 12 || mm < 1)
-    {
-        printf("Introduce un mes valido para reservar: \n");
-    }
-    else if (aa < 2024)
-    {
-        printf("Introduce un año valido para reservar: \n");
-    }
+// OPCIONES MENU
+void OpcionAgregarReserva();
+void OpcionVerReservas();
+void OpcionSobreescribirReserva();
+void OpcionConsultaDisponibilidad();
+void OpcionBuscarID();
+int OpcionCancelarReserva();
 
-    // Esto cambia la variable Fecha_Es_Valida del main para salir del bucle.
 
-    else
-    {
-        *validar = 1;
-    }
-}
+// FUNCIONES PARA RE
+int printReserva(re* PtrReserva);
+void scanReserva(re * PtrReserva);
+void CalcularExtra(re* PtrReserva);
 
-void Asignar_Categorias(struct Hotel Categorias)
-{
-    // Asigno 2 habitaciones sencillas, 2 dobles y 1 triple por piso del hotel en el main y aqui las visualizo.
-    printf("Categorias de cada habitacion del hotel: \n");
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            
-            printf("%i", Categorias.Habitaciones[i][j]);
-        }
-        printf("\n");
-    }
-}
+
+// SUB-FUNCIONES DE SCANRESERVA()
+void scan_Nombre(re * PtrReserva);
+void scan_Apellido(re * PtrReserva);
+void scan_Num_Id(re * PtrReserva);
+void scan_Personas_Totales(re * PtrReserva);
+
+
+// SUB-FUNCIONES DE FECHA Y CATEGORIA
+void scan_Fecha_Categoria(re * PtrReserva);
+void scan_Fecha_Entrada_Salida(re * PtrReserva);
+void scan_Fecha_Entrada_Solo_Categoria(re *PtrReserva);
+void scan_Fecha_Entrada_Solo(re * PtrReserva);
+void scan_Categoria(re * PtrReserva);
+void scan_Habitacion(re * PtrReserva);
+//~ void scan_Habitacion_Fecha(re * PtrReserva);
+
+// FUNCIONES BUSCAR
+void BuscarReservasRango(date Entrada, date Salida);
+int BuscarHabitacionFechaCategoria (re * PtrReserva);
+void BuscarHabitacionPorCategoria(int Categoria, hab ** PtrVectorHabitaciones, int * Tam);
+void BuscarHabitacionesPorFechas(date Entrada, date Salida);
+void BuscarFechas(hab Habitacion);
+//~ void BuscarReservasCoincidentes(re * PtrReserva);
+
+// VALIDAR DISPONIBILIDAD
+int ValidarDisponibilidad2(hab Habitacion, date Entrada, date Salida);
+int ValidarDisponibilidadYPrint(re * PtrReserva);
+
+
+
+
+// FUNCIONES DE FECHA
+int Las_Fechas_Coinciden(date Entrada1, date Salida1, date Entrada2, date Salida2);
+int Fecha_En_El_Rango_Abierto(date I, date F, date X);
+int Restar_Fechas(date I, date F); //F - I
+int Contar_Bisiestos(int aaI, int aaF);
+int Comparar_Fechas(date I, date F);
+int Validar_Fecha(date F);
+int Es_Bisiesto(int aa);
+int Dia_Anio(date F);
+
+
+
+// FUNCIONES PARA VECTORES DE T_RESERVA
+int Agrandar_RESERVAS();
+
+// FUNCIONES PARA ARCHIVOS-VECTORES
+int READ_RESERVAS();
+int WRITE_RESERVAS();
+
+
+// FUNCIONES TONTAS
+int scan_Date(date* Fecha);
+date get_Date();
+void Enter2(char Ultimo);
+void Enter();
+void LimpiarEntrada();
+void LimpiarPantalla();
+int Opcion();
+int getInt10();
+char* getString10();
+int Salir();
+void MensajeSalir();
+
+
+
+
+int Busqueda_ID(int ID_Buscar);
+int Pedir_ID();
+int Menu_Editar_Reserva();
+void CancelarReserva();
+int ConfirmarCancelacion();
+
