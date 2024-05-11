@@ -1026,15 +1026,15 @@ int READ_RESERVAS()
 	else
 	{
 		// Se va al final, revisa cuanto pesa el archivo
-		fseek(PtrFile, 0, SEEK_END);
-		long TamArchivo = ftell(PtrFile);
+		fseek(PtrFile, 0, SEEK_END); //se mueve 0 posiciones desde el final
+		long TamArchivo = ftell(PtrFile); // me dice cuantos elementos hay desde ahi
 		// Calcula cuantos elementos tiene: Peso/PesoElemento
-		Tam_RESERVAS = TamArchivo / sizeof(re);
+		Tam_RESERVAS = TamArchivo / sizeof(re); // me dice el tamaño de cada reserva
 
 		rewind(PtrFile); // Vuelve al inicio
 
 		// Crea un vector: Reserva el espacio en memoria adecuado
-		RESERVAS = calloc(Tam_RESERVAS, sizeof(re));
+		RESERVAS = calloc(Tam_RESERVAS, sizeof(re)); //hace un espacio en memoria , numero de elementos/tamano de elementos
 
 		// Pasa los datos al vector recien creado
 		fread(RESERVAS, sizeof(re), Tam_RESERVAS, PtrFile);
